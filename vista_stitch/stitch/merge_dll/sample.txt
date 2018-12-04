@@ -1,0 +1,81 @@
+void testMergeImg()
+{
+	char file_name[128];
+	IplImage *ipl_img, *res_img, *resize_img;
+	unsigned char *pHost, *pDevice[4], *pResDevice, *pResHost, *pResizeDevice, *pResizeHost;
+	int i, width, height, dst_w, dst_h, resize_w, resize_h, img_num = 2;
+	size_t src_pitch, dst_pitch, resize_pitch;
+	int device_id = 0;
+
+	cudaError_t status = cudaSetDevice(device_id);
+	if (status!=cudaSuccess)
+	{
+		printf("failed to set device id\n");
+		return;
+	}
+
+	for (i=0; i<img_num; i++)
+	{
+		sprintf(file_name, "%d.bmp", i+1);
+		ipl_img = cvLoadImage(file_name);
+		if (i==0)
+		{
+			width = ipl_img->width;
+			height = ipl_img->height;
+			pHost = new unsigned char[3*width*height/2];
+		}
+		IplImg2NV12(ipl_img, pHost);
+		cudaMallocPitch((void**)&pDevice[i], &src_pitch, width, 3*height/2);
+        cudaMemcpy2D(pDevice[i], src_pitch, pHost, width, width, 3*height/2, cudaMemcpyHostToDevice);	
+    	cvReleaseImage(&ipl_img);
+	}
+
+	dst_w = img_num*width;
+	//dst_w = img_num*width/2;
+	dst_h = height;
+	//dst_h = height*2;
+	resize_w = dst_w/2;
+	resize_h = dst_h/2;
+	cudaMallocPitch((void**)&pResDevice, &dst_pitch, dst_w, 3*dst_h/2);
+	cudaMallocPitch((void**)&pResizeDevice, &resize_pitch, resize_w, 3*resize_h/2);
+	pResHost = new unsigned char[3*dst_w*dst_h/2];
+	pResizeHost = new unsigned char[3*resize_w*resize_h/2];
+	res_img = cvCreateImage(cvSize(dst_w, dst_h), IPL_DEPTH_8U, 3);
+	resize_img = cvCreateImage(cvSize(resize_w, resize_h), IPL_DEPTH_8U, 3);
+
+	int ret = merge_nv12(pDevice, width, src_pitch, height, img_num, pResDevice, dst_w, dst_pitch, dst_h, device_id);
+	if (ret==-1)
+	{
+		printf("error\n");
+		return;
+	}
+
+	ret = resize_nv12(pResDevice, dst_w, dst_pitch, dst_h, pResizeDevice, resize_w, resize_pitch, resize_h, device_id);
+	if (ret==-1)
+	{
+		printf("error\n");
+		return;
+	}
+        
+        cudaMemcpy2D(pResHost, dst_w, pResDevice, dst_pitch, dst_w, 3*dst_h/2, cudaMemcpyDeviceToHost);
+	NV12toIplImg(pResHost, res_img);
+	cudaMemcpy2D(pResizeHost, resize_w, pResizeDevice, resize_pitch, resize_w, 3*resize_h/2, cudaMemcpyDeviceToHost);
+	NV12toIplImg(pResizeHost, resize_img);
+
+	cvNamedWindow("res", 0);
+	cvShowImage("res", res_img);
+
+	cvNamedWindow("resize",1 );
+	cvShowImage("resize", resize_img);
+	for (i=0; i<img_num; i++)
+	{
+		cudaFree(pDevice[i]);
+	}
+	cudaFree(pResDevice);
+	cudaFree(pResizeDevice);
+	delete [] pResHost;
+	delete [] pResizeHost;
+	cvReleaseImage(&res_img);
+	cvReleaseImage(&resize_img);
+}
+

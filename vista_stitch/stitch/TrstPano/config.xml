@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Config>
+  <StitchParameter>
+    <InitFlag>1</InitFlag>
+    <FeatureScale>0.4</FeatureScale>
+    <SeamType>1</SeamType>
+    <ProjectType>1</ProjectType>
+    <DehazerEnable>1</DehazerEnable>
+    <DehazerRadius>11</DehazerRadius>
+    <DehazerRizeratio>0.25</DehazerRizeratio>
+    <Distort>0</Distort>
+    <AdjustArray>
+		<!--<Adjust x="3697" y="258" rx="400" ry="400"/>-->
+    </AdjustArray>
+  </StitchParameter>
+  <!--拼接参数-->
+  <PanoParameter>
+    <OsdInfo>
+      <Flashing>0</Flashing>
+      <!--字符叠加-->
+      <TimeStamp enable="1">
+        <!--时间戳-->
+        <Position offsetx="100" offsety="80" lefttopmode="0" fontsize="20" color="0" diaphaneity="1.0"/>
+        <!--时间戳显示位置：offsetx水平偏移，offsety垂直偏移，lefttopmode顶左模式（0:顶左, 3:底左, 1:顶右, 2:底右），fontsize字体大小，color颜色模式，仅支持黑白两色，0-黑色，1-白色-->
+        <Format day="3" hour="1" week="1"/>
+        <!--日期格式：day=1，2015/12/2，day=2，2015-12-2，day=3，2015年12月2日-->
+        <!--时间格式：hour =1，24小时制，hour =2，12小时制-->
+        <!--星期格式：week =1，显示星期，week =2，不显示星期-->
+      </TimeStamp>
+	  <!--通道名称显示位置：offsetx水平偏移，offsety垂直偏移，lefttopmode顶左模式（0:顶左, 1:底左, 2:顶右, 3:底右），fontsize字体大小，color颜色模式，仅支持黑白两色，0-黑色，1-白色-->
+	<Channel enable="1" name="天睿空间_900" offsetx="3000" offsety="900" lefttopmode="0" fontsize="14" color="0" diaphaneity="1" interval="0"/>
+	<Channel enable="1" name="天睿全景_901" offsetx="400" offsety="100" lefttopmode="0" fontsize="14" color="0" diaphaneity="1" interval="0"/>
+	<Channel enable="1" name="天睿全景_902" offsetx="600" offsety="200" lefttopmode="0" fontsize="14" color="0" diaphaneity="1" interval="0"/>
+	<Channel enable="1" name="天睿全景_903" offsetx="800" offsety="300" lefttopmode="0" fontsize="14" color="1" diaphaneity="1" interval="0"/>
+	<Channel enable="1" name="天睿全景_904" offsetx="1000" offsety="400" lefttopmode="0" fontsize="14" color="0" diaphaneity="1" interval="0"/>
+	<Channel enable="1" name="天睿全景_905" offsetx="1200" offsety="500" lefttopmode="0" fontsize="14" color="1" diaphaneity="1" interval="0"/>
+	<Channel enable="1" name="天睿全景_906" offsetx="1400" offsety="600" lefttopmode="0" fontsize="14" color="0" diaphaneity="1" interval="0"/>
+	<Channel enable="1" name="天睿全景_907" offsetx="1600" offsety="800" lefttopmode="0" fontsize="14" color="0" diaphaneity="1" interval="0"/>
+    </OsdInfo>
+  </PanoParameter>
+</Config>
