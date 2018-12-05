@@ -358,7 +358,7 @@ bool Encoder::setParam(const EncodeParam& param, AVBufferRef *pHWCtx)
     }
     else
     {
-        if(/*!*/pHWCtx)
+        if(!pHWCtx)
             av_dict_set(&pCodecDict_, "preset", "ultrafast", 0);
         else
             av_dict_set(&pCodecDict_, "preset", "fast", 0);
