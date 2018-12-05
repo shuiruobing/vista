@@ -191,6 +191,8 @@ void Panorama::onDecoderOpened(int id)
                  ,"stitcher set output error!");
         F_ASSERT(pStitcher_->open(),"stitcher open failed!");
         F_ASSERT(mainEncoder_->open(ep,pHWEncCtx_),"Main encoder open failed!");
+
+        qDebug()<<"all modual start success!!!";
         mainEncoder_->run();
         pStitchTimer_->start();
     }

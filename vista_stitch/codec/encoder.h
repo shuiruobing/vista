@@ -59,12 +59,11 @@ struct OutParam
 
 class NaluStream;
 class MuxerStream;
-using OutParamArr = std::vector<OutParam>;
 class Encoder
 {
 public:
 
-    Encoder(const OutParam& muxerParam, const std::string& naluUrl);
+    Encoder(const OutParam& muxerParam, const std::string& naluUrl, int maxCached = 20);
 
     ~Encoder();
 
@@ -103,8 +102,7 @@ private:
     void encode();
 
 private:
-    OutParamArr outParams_;
-
+    int c_maxCached_{20};
     AVCodecContext* pCodecCtx_{nullptr};
     AVCodec* pCodec_{nullptr};
     AVDictionary* pCodecDict_{nullptr};

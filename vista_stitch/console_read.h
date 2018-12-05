@@ -13,6 +13,8 @@ public:
 
     ConsoleRead(QObject* parent = nullptr);
 
+    ~ConsoleRead();
+
     bool start();
 
     void stop();

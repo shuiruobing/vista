@@ -57,7 +57,8 @@ public:
     {
         url_ = url;
         this->stopThread();
-        this->startThread();
+        if(!url_.empty())
+            this->startThread();
         return true;
     }
 
@@ -169,6 +170,8 @@ public:
         int ret = avformat_alloc_output_context2(&pFmt_, pout, nullptr, nullptr);
         if(ret != 0)
         {
+            qCritical()<<"Url["<<url_.c_str()
+                      <<"]avformat_alloc_output_context2 faild:"<<AV_ERR(ret);
             return false;
         }
 
@@ -176,6 +179,8 @@ public:
         ret = avcodec_parameters_from_context(os->codecpar, avctx);
         if(ret != 0)
         {
+            qCritical()<<"Url["<<url_.c_str()
+                      <<"]avcodec_parameters_from_context faild:"<<AV_ERR(ret);
             return false;
         }
 
@@ -231,8 +236,9 @@ private:
  * **************************************************************/
 
 
-Encoder::Encoder(const OutParam &muxerParam, const std::string &naluUrl)
-    : pMuxerStream_(new MuxerStream(muxerParam.url,muxerParam.muxer))
+Encoder::Encoder(const OutParam &muxerParam, const std::string &naluUrl, int maxCached)
+    : c_maxCached_(maxCached)
+    , pMuxerStream_(new MuxerStream(muxerParam.url,muxerParam.muxer))
     , pNaluStream_(new NaluStream(naluUrl))
 {
 }
@@ -295,7 +301,10 @@ void Encoder::run()
 void Encoder::send(FramePtr pFrame)
 {
     frameMtx_.lock();
-    frameQue_.push(pFrame);
+    if(frameQue_.size() < c_maxCached_)
+        frameQue_.push(pFrame);
+    else
+        printf("encoder drop yuv\n");
     frameMtx_.unlock();
 }
 
@@ -349,11 +358,16 @@ bool Encoder::setParam(const EncodeParam& param, AVBufferRef *pHWCtx)
     }
     else
     {
-        av_dict_set(&pCodecDict_, "profile", "main", 0);
-        av_dict_set(&pCodecDict_, "preset", "medium", 0);
+        if(/*!*/pHWCtx)
+            av_dict_set(&pCodecDict_, "preset", "ultrafast", 0);
+        else
+            av_dict_set(&pCodecDict_, "preset", "fast", 0);
         av_dict_set(&pCodecDict_, "tune", "zerolatency", 0);
+        av_dict_set(&pCodecDict_, "profile", param.profile.c_str(), 0);
         av_dict_set(&pCodecDict_, "vbr","1",0);
     }
+    av_dict_set(&pCodecDict_, "threads", "4", 0);
+
     pCodecCtx_->codec_type = AVMEDIA_TYPE_VIDEO;
     pCodecCtx_->pix_fmt = AV_PIX_FMT_NV12;
     pCodecCtx_->width = param.width;
@@ -368,7 +382,7 @@ bool Encoder::setParam(const EncodeParam& param, AVBufferRef *pHWCtx)
     {
         pCodecCtx_->refs = 1;
         pCodecCtx_->qmax = 51;
-        pCodecCtx_->qmin = 1;
+        pCodecCtx_->qmin = 10;
         pCodecCtx_->bit_rate_tolerance = pCodecCtx_->bit_rate;
         pCodecCtx_->rc_min_rate = pCodecCtx_->bit_rate;
         pCodecCtx_->rc_max_rate = pCodecCtx_->bit_rate*3/2;
@@ -391,11 +405,15 @@ bool Encoder::setParam(const EncodeParam& param, AVBufferRef *pHWCtx)
 bool Encoder::openEncoder()
 {
     if(!encoderExist())
+    {
+        qCritical()<<"can not open Encoder before created.";
         return false;
+    }
 
     auto ret = avcodec_open2(pCodecCtx_, pCodec_, &pCodecDict_);
     if ( ret < 0)
     {
+        qCritical()<<"avcodec_open2 failed:"<<AV_ERR(ret);
         return false;
     }
     return true;
@@ -415,24 +433,38 @@ bool Encoder::openRemoveBsf()
     else if(pCodec_->id == AV_CODEC_ID_HEVC)
         removeType.assign("39-40");
     else
+    {
+        qCritical()<<"Encoder do not support id:"<<pCodec_->id;
         return false;
+    }
 
     const AVBitStreamFilter* f = av_bsf_get_by_name("filter_units") ;
     if(!f)
+    {
+        qCritical()<<"Encoder av_bsf_get_by_name(filter_units) failed!";
         return false;
+    }
     int ret = av_bsf_alloc(f,&pBsfCtx_);
     if(ret != 0)
+    {
+        qCritical()<<"Encoder av_bsf_alloc failed:"<<AV_ERR(ret);
         return false;
+    }
 
     ret = avcodec_parameters_from_context(pBsfCtx_->par_in, pCodecCtx_);
     if(ret != 0)
+    {
+        qCritical()<<"Encoder avcodec_parameters_from_context failed:"<<AV_ERR(ret);
         return false;
-
+    }
     pBsfCtx_->time_base_in = pCodecCtx_->time_base;
     av_opt_set(pBsfCtx_->priv_data, "remove_types", removeType.c_str(), 0);
     ret = av_bsf_init(pBsfCtx_);
     if(ret != 0)
+    {
+        qCritical()<<"Encoder av_bsf_init failed:"<<AV_ERR(ret);
         return false;
+    }
 
     return true;
 }
@@ -469,8 +501,8 @@ void Encoder::encode()
         while(true)
         {
             PacketPtr pkt(av_packet_alloc());
-            auto ret = avcodec_receive_packet(pCodecCtx_, pkt.get());
-            if(ret != 0)
+            auto ret1 = avcodec_receive_packet(pCodecCtx_, pkt.get());
+            if(ret1 != 0)
                 break;
 
             if(0 == av_bsf_send_packet(pBsfCtx_, pkt.get())

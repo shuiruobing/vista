@@ -8,6 +8,11 @@ ConsoleRead::ConsoleRead(QObject *parent)
 
 }
 
+ConsoleRead::~ConsoleRead()
+{
+    this->stop();
+}
+
 bool ConsoleRead::start()
 {
     running_.store(true);
@@ -19,7 +24,7 @@ void ConsoleRead::stop()
 {
     if(pThreadThread_)
     {
-        pThreadThread_->join();
+        pThreadThread_->detach();
         delete pThreadThread_;
         pThreadThread_ = nullptr;
     }
@@ -30,10 +35,14 @@ void ConsoleRead::run()
     std::string str;
     while(running_)
     {
-        if(std::getline(std::cin,str))
-            parseCommand(str);
-        else
-            doExit();
+        try{
+            if(std::getline(std::cin,str))
+                parseCommand(str);
+            else
+                doExit();
+        } catch(const std::exception& e) {
+            running_ = false;
+        }
     }
 }
 

@@ -26,11 +26,15 @@ bool StitchCuda::setHardware(const std::string &device)
     auto ret = cuDeviceGet(&device_, std::stoi(device));
     if(ret != CUDA_SUCCESS)
     {
+        qCritical()<<"cuDeviceGet["<<device.c_str()
+                   <<"] faild:"<<ret;
         return false;
     }
     ret = cuCtxCreate(&pCtx_, CU_CTX_SCHED_AUTO, device_);
     if(ret != CUDA_SUCCESS)
     {
+        qCritical()<<"cuCtxCreate["<<device.c_str()
+                   <<"] faild:"<<ret;
         return false;
     }
     return true;
@@ -117,13 +121,22 @@ bool StitchCuda::allocMem(CudaFrame &cf)
     CUcontext cur = nullptr;
     auto ret = cuCtxPushCurrent(pCtx_);
     if(ret != CUDA_SUCCESS)
+    {
+        qCritical()<<"cuCtxPushCurrent["<<device_<<"] faild:"<<ret;
         return false;
+    }
     ret = cuMemAllocPitch(&cf.data, &cf.pitch, cf.width, cf.height*3/2, CUDA_ALIGN);
     if(ret != CUDA_SUCCESS)
+    {
+        qCritical()<<"cuMemAllocPitch["<<device_<<"] faild:"<<ret;
         return false;
+    }
     ret = cuCtxPopCurrent(&cur);
     if(ret != CUDA_SUCCESS)
+    {
+        qCritical()<<"cuCtxPopCurrent["<<device_<<"] faild:"<<ret;
         return false;
+    }
     return true;
 }
 
@@ -132,12 +145,18 @@ bool StitchCuda::freeMem(CudaFrame& cf)
     CUcontext cur = nullptr;
     auto ret = cuCtxPushCurrent(pCtx_);
     if(ret != CUDA_SUCCESS)
+    {
+        qCritical()<<"cuCtxPushCurrent["<<device_<<"] faild:"<<ret;
         return false;
+    }
     if(cf.data)
         cuMemFree(cf.data);
     ret = cuCtxPopCurrent(&cur);
     if(ret != CUDA_SUCCESS)
+    {
+        qCritical()<<"cuCtxPopCurrent["<<device_<<"] faild:"<<ret;
         return false;
+    }
     return true;
 }
 
