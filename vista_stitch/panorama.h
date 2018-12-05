@@ -32,7 +32,7 @@ private slots:
 
     void onFatalError(const QString& str);
 
-    Q_INVOKABLE void onChangeMulticast(QString multicast);
+    Q_INVOKABLE void onChangeMuxerUrl(QString outUrl);
 
 private:
 

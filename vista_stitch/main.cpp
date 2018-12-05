@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
     }
 
     ConsoleRead cr;
+    connect(&cr,&ConsoleRead::needChangeMuxerOut, &pano, &Panorama::onChangeMuxerUrl);
+    connect(&cr,&ConsoleRead::needQuit, qApp, &QCoreApplication::quit);
     cr.start();
 
     auto retCode = a.exec();

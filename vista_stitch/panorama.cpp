@@ -234,11 +234,11 @@ void Panorama::onFatalError(const QString &str)
     qApp->quit();
 }
 
-void Panorama::onChangeMulticast(QString multicast)
+void Panorama::onChangeMuxerUrl(QString outUrl)
 {
     if(mainEncoder_)
     {
-        mainEncoder_->changeMuxerUrl(multicast.toStdString());
+        mainEncoder_->changeMuxerUrl(outUrl.toStdString());
     }
 }
 
