@@ -32,6 +32,8 @@ private slots:
 
     void onFatalError(const QString& str);
 
+public slots:
+
     Q_INVOKABLE void onChangeMuxerUrl(QString outUrl);
 
 private:

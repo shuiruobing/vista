@@ -21,9 +21,9 @@ public:
 
 signals:
 
-    Q_INVOKABLE void needChangeMuxerOut();
+    Q_INVOKABLE void needChangeMuxerOut(QString url);
 
-    Q_INVOKABLE void needChangeNaluOut();
+    Q_INVOKABLE void needChangeNaluOut(QString url);
 
     Q_INVOKABLE void needQuit();
 
