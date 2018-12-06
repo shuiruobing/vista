@@ -76,21 +76,22 @@ int main(int argc, char *argv[])
     qDebug()<<param.c_str();
     cfg::saveConfigureToFile(param, vistaFile);
 
-    Panorama pano(pn);
-    if(!pano.open())
+    Panorama* pano = new Panorama(pn);
+    ConsoleRead cr;
+    cr.connect(&cr,&ConsoleRead::needChangeMuxerOut, pano, &Panorama::onChangeMuxerUrl);
+    cr.connect(&cr,&ConsoleRead::needQuit, qApp, &QCoreApplication::quit);
+    cr.start();
+
+    if(!pano->open())
     {
         qCritical()<<"Start vista panorama module failed!";
         return -5;
     }
 
-    ConsoleRead cr;
-    cr.connect(&cr,&ConsoleRead::needChangeMuxerOut, &pano, &Panorama::onChangeMuxerUrl);
-    cr.connect(&cr,&ConsoleRead::needQuit, qApp, &QCoreApplication::quit);
-    cr.start();
-
     auto retCode = a.exec();
-
     cr.stop();
+    delete pano;
+
     spdlog::get(APP_NAME)->flush();
     spdlog::drop_all();
 
@@ -100,8 +101,8 @@ int main(int argc, char *argv[])
 
 void LogOutMessage(QtMsgType type, const QMessageLogContext& content, const QString& msg)
 {
-    //static QMutex mutex;
-    //mutex.lock();
+    static QMutex mutex;
+    mutex.lock();
 
     QString contextInfo = QString("File[%1] Line[%2]").arg(QString(content.file)).arg(content.line);
     QString dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss:zzz");
@@ -128,7 +129,7 @@ void LogOutMessage(QtMsgType type, const QMessageLogContext& content, const QStr
         break;
     }
 
-    //mutex.unlock();
+    mutex.unlock();
     spdlog::get(APP_NAME)->flush();
 }
 

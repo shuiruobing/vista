@@ -78,9 +78,6 @@ private:
     AVBufferRef* pDevice_{nullptr};
     AVBufferRef* pHWEncCtx_{nullptr};
 
-    std::thread stdinThread_;
-    std::atomic_bool stdinRunning_{true};
-
 };
 
 #endif // PANORAMA_H

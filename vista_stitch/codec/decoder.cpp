@@ -231,7 +231,7 @@ bool Decoder::createDecoder()
     if(vi < 0 || nullptr == pCodec_)
     {
         ERR_OUT(av_find_best_stream,vi);
-        return nullptr;
+        return false;
     }
 
     pStream_ = pFmtCtx_->streams[vi];

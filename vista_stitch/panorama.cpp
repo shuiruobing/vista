@@ -93,7 +93,6 @@ Panorama::Panorama(const cfg::PanoNode &pn, QObject *parent)
     , c_deviceNo_(pn.hardwareNo)
     , pStitchTimer_(new QTimer(this))
     , pPanoFrame_(av_frame_alloc())
-    , stdinThread_(&Panorama::stdinThreadFunc,this)
 {
     pStitchTimer_->setInterval(40);
     pStitchTimer_->setTimerType(Qt::PreciseTimer);
@@ -109,6 +108,7 @@ Panorama::Panorama(const cfg::PanoNode &pn, QObject *parent)
                                   , param_.input.maxGopCached
                                   , param_.input.maxGopCached);
         connect(pd,&Decoder::opened,this,&Panorama::onDecoderOpened);
+        connect(pd, &Decoder::error, this, &Panorama::onDecoderError);
         decoders_.push_back(pd);
     }
 
@@ -119,9 +119,6 @@ Panorama::Panorama(const cfg::PanoNode &pn, QObject *parent)
 
 Panorama::~Panorama()
 {
-    stdinRunning_.store(false);
-    stdinThread_.join();
-
     pStitchTimer_->stop();
     pStitchTimer_->deleteLater();
 
@@ -212,6 +209,8 @@ void Panorama::onDecoderError(int id, QString errStr)
 {
     Q_UNUSED(id);
     Q_UNUSED(errStr);
+    qCritical()<<"Decoder["<<id<<"] error:"<<errStr;
+    qApp->exit(-10);
 }
 
 void Panorama::onStitch()
@@ -342,42 +341,6 @@ bool Panorama::fillhw(AVBufferRef *pCtx, FramePtr pFrame)
     }
     return true;
 }
-
-void Panorama::stdinThreadFunc()
-{
-    quint64 max_read = 1024;
-    while(stdinRunning_)
-    {
-        QTextStream qtin(stdin);
-        QString content = qtin.readLine(max_read);
-        if(content.isEmpty())
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        else
-            processStdin(content);
-    }
-}
-
-void Panorama::processStdin(const QString &info)
-{
-    if(info.isEmpty())
-        return ;
-
-    std::string content = info.toStdString();
-    try
-    {
-        cfg::cmd::CmdType type = cfg::cmd::getType(content);
-        if(type == cfg::cmd::ChangeMulticast)
-        {
-            cfg::cmd::NewMuxerOut nm = cfg::cmd::toNewMuxerOut(content);
-            QMetaObject::invokeMethod(this, "onChangeMulticast", Qt::QueuedConnection
-                                      , Q_ARG(QString, QString::fromStdString(nm.muxerUrl)));
-        }
-    }catch(std::exception& e){
-        qCritical()<<e.what();
-    }
-}
-
-
 
 
 //    AVPixelFormat getPixel(AVHWDeviceType type)
