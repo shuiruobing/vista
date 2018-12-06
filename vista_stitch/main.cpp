@@ -51,6 +51,9 @@ int main(int argc, char *argv[])
         root.append("/");
 
     InitLog(root);
+    qDebug()<<"Log start...";
+    qWarning()<<"Log start...";
+    qCritical()<<"Log start...";
 
     QString vistaFile = root + "vista_stitch.json";
     std::string param = G_Flag->parameter().toStdString();
@@ -86,17 +89,19 @@ int main(int argc, char *argv[])
     cr.start();
 
     auto retCode = a.exec();
-    cr.stop();
 
     cr.stop();
+    spdlog::get(APP_NAME)->flush();
+    spdlog::drop_all();
+
     return retCode;
 }
 
 
 void LogOutMessage(QtMsgType type, const QMessageLogContext& content, const QString& msg)
 {
-    static QMutex mutex;
-    mutex.lock();
+    //static QMutex mutex;
+    //mutex.lock();
 
     QString contextInfo = QString("File[%1] Line[%2]").arg(QString(content.file)).arg(content.line);
     QString dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss:zzz");
@@ -123,7 +128,8 @@ void LogOutMessage(QtMsgType type, const QMessageLogContext& content, const QStr
         break;
     }
 
-    mutex.unlock();
+    //mutex.unlock();
+    spdlog::get(APP_NAME)->flush();
 }
 
 void InitLog(const QString& rootDir)
@@ -131,6 +137,11 @@ void InitLog(const QString& rootDir)
     QDir dir(rootDir);
     dir.mkdir(APP_NAME"_log");
     dir.cd(APP_NAME"_log");
+
+    spdlog::set_level(spdlog::level::debug);
+    //spdlog::set_async_mode(1024);
+    spdlog::set_pattern("%v");
+
     QDateTime currentTime = QDateTime::currentDateTime();
     QString timeStr = currentTime.toString("yyyy-MM-dd-hh_mm_ss_zzz");
     std::string logPath = rootDir.toStdString()
@@ -138,8 +149,5 @@ void InitLog(const QString& rootDir)
             + "_log/" + std::string(APP_NAME)
             + "_" + timeStr.toStdString() + ".log";
     spdlog::rotating_logger_mt(APP_NAME, logPath, 2*1024*1024, 50);
-    spdlog::set_level(spdlog::level::trace);
-    spdlog::set_async_mode(1024);
-    spdlog::set_pattern("%v");
     qInstallMessageHandler(LogOutMessage);
 }

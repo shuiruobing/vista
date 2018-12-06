@@ -90,12 +90,11 @@ Panorama::Panorama(const cfg::PanoNode &pn, QObject *parent)
     , c_inputCount_((int)pn.input.devices.size())
     , c_decodeHW_(pn.input.hardware)
     , c_encodeHW_(pn.output.encode.hardware)
-    , c_deviceNo_("0")
+    , c_deviceNo_(pn.hardwareNo)
     , pStitchTimer_(new QTimer(this))
     , pPanoFrame_(av_frame_alloc())
     , stdinThread_(&Panorama::stdinThreadFunc,this)
 {
-
     pStitchTimer_->setInterval(40);
     pStitchTimer_->setTimerType(Qt::PreciseTimer);
 
@@ -236,6 +235,7 @@ void Panorama::onFatalError(const QString &str)
 
 void Panorama::onChangeMuxerUrl(QString outUrl)
 {
+    qCritical()<<"ChangeMuxerUrl--->["<<outUrl<<"]";
     if(mainEncoder_)
     {
         mainEncoder_->changeMuxerUrl(outUrl.toStdString());

@@ -116,6 +116,8 @@ private:
     MuxerStream* pMuxerStream_;
 
     std::size_t frameNo_{0};
+
+    int dropNo_{0};
 };
 
 #endif // ENCODER_H

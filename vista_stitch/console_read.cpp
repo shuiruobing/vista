@@ -49,6 +49,9 @@ void ConsoleRead::run()
 void ConsoleRead::parseCommand(const std::string& str)
 {
     QString inStr = QString::fromStdString(str);
+    qCritical()<<"Command read:"<<inStr;
+    qInfo()<<inStr;
+
     QStringList list = inStr.split(32); //split by space
     if(list.size() < 1 || list.size() > 2)
         return;

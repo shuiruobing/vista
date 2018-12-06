@@ -73,6 +73,7 @@ public:
 protected :
     void startThread()
     {
+        qCritical()<<"start output Thread url:"<<url_.c_str();
         running_.store(true);
         thread_ = std::thread(&OutStream::run, this, url_);
     }
@@ -135,6 +136,7 @@ public:
 protected:
     virtual bool run(const std::string& url) override
     {
+        qCritical()<<"Output nalu url:"<<url.c_str();
         AVIOContext* pb = nullptr;
         while(running_)
         {
@@ -153,6 +155,10 @@ protected:
                 this->clearPacket();
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
+
+        if(pb)
+            avio_closep(&pb);
+        qCritical()<<"Output nalu Exit url:"<<url.c_str();
         return true;
     }
 };
@@ -202,6 +208,7 @@ public:
 protected:
     bool run(const std::string& url)
     {
+        qCritical()<<"output muxer url:"<<url.c_str()<<", running:"<<running_;
         while(running_)
         {
             if(!pFmt_->pb)
@@ -209,6 +216,7 @@ protected:
                 auto ret = avio_open(&pFmt_->pb, url.c_str(), AVIO_FLAG_WRITE);
                 if(ret == 0)
                 {
+                    qCritical()<<"output muxer url:"<<url.c_str()<<" success!";
                     avformat_write_header(pFmt_, nullptr);
                 }
             }
@@ -223,6 +231,11 @@ protected:
                 this->clearPacket();
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
+
+        if(pFmt_->pb)
+            avio_closep(&pFmt_->pb);
+
+        qCritical()<<"output muxer exit:"<<url.c_str();
         return true;
     }
 
@@ -303,8 +316,11 @@ void Encoder::send(FramePtr pFrame)
     frameMtx_.lock();
     if(frameQue_.size() < c_maxCached_)
         frameQue_.push(pFrame);
-    else
-        printf("encoder drop yuv\n");
+    else if(++dropNo_ > c_maxCached_)
+    {
+        qWarning()<<"Encoder drop no:"<<c_maxCached_;
+        dropNo_ = 0;
+    }
     frameMtx_.unlock();
 }
 
