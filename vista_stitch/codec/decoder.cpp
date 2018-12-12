@@ -1,41 +1,6 @@
 #include "decoder.h"
 #include <QDebug>
 
-//    int t = av_hwdevice_find_type_by_name("h264_cuvid");
-
-//    char const* cn = getCodecName(C_Codec_Type_, pc->id);
-//    AVCodec const* pcnew = cn ? avcodec_find_decoder_by_name(cn) : pc;
-//    if(!pcnew)
-//    {
-//        qCritical()<<"avcodec_find_decoder_by_name failed, codec name:"<<cn;
-//        return false;
-//    }
-
-//    pCodecCtx_->hw_frames_ctx = av_hwframe_ctx_alloc(pCodecCtx_->hw_device_ctx);
-//    av_hwframe_ctx_init(pCodecCtx_->hw_frames_ctx);
-
-//    AVHWFramesContext* pf = (AVHWFramesContext*)pCodecCtx_->hw_frames_ctx->data;
-
-//const char* getCodecNameNvidia(AVCodecID id)
-//{
-//    if(id == AV_CODEC_ID_H264)
-//        return "h264_cuvid";
-//    else if(id == AV_CODEC_ID_HEVC)
-//        return "hevc_cuvid";
-//    else if(id == AV_CODEC_ID_VP8)
-//        return "vp8_cuvid";
-//    else if(id == AV_CODEC_ID_VP9)
-//        return "vp9_cuvid";
-//    return nullptr;
-//}
-
-
-//auto pix = getPixFmt(reinterpret_cast<AVHWDeviceContext*>(pDevice->data), pc);
-//if(AV_PIX_FMT_NONE == pix)
-//{
-//    return false;
-//}
-
 #define ERR_OUT(FUNC_NAME, CODE) qCritical()\
     <<"camera["<<c_id_<<"]"\
     <<#FUNC_NAME<<" error:("<<ret<<")"<<AV_ERR(CODE)
@@ -84,9 +49,10 @@ Decoder::Decoder(int id, const std::string &url, int cachePacketGops, int cacheF
     , c_cachedMaxFrames_(cacheFrameCount)
 {
     if(! av_dict_get(pFmtDict_, "rtsp_transport", NULL, 0))
+    {
         av_dict_set(&pFmtDict_, "rtsp_transport", "tcp",0);
-
-    av_dict_set(&pFmtDict_, "stimeout", "1000000", 0);
+    }
+    av_dict_set(&pFmtDict_, "stimeout", "5000000", 0);   //tcp 5s
     av_dict_set(&pFmtDict_, "max_delay", "5000000", 0);
     av_dict_set(&pFmtDict_, "fflags", "nobuffer", 0);
     av_dict_set(&pFmtDict_, "recv_buffer_size", "100000", 0);
@@ -140,7 +106,7 @@ void Decoder::workThreadFunc(AVBufferRef *pd)
     ,Qt::QueuedConnection ,Q_ARG(int,c_id_));}while(0)
 #define SEND_FAILED() do{\
     QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection\
-    ,Q_ARG(int,c_id_), Q_ARG(QString, errorStr_));}while(0)
+    ,Q_ARG(int,c_id_), Q_ARG(QString, "decoder error!"));}while(0)
 
 
     std::atomic_bool decoding{false};
@@ -160,7 +126,7 @@ void Decoder::workThreadFunc(AVBufferRef *pd)
 
         freeSws();
         closeDecoder();
-        freeBSF();
+//        freeBSF();
         freeDecoder();
         closeInput();
 
@@ -286,7 +252,10 @@ bool Decoder::openDecoder()
 void Decoder::closeDecoder()
 {
     if(decoderOpened())
+    {
         avcodec_close(pCodecCtx_);
+        pCodecCtx_ = nullptr;
+    }
 }
 
 bool Decoder::decoderOpened()
@@ -423,38 +392,35 @@ bool Decoder::readPacket()
 
 bool Decoder::decodePacket(PacketPtr pkt)
 {
-    auto ret = 0;
-    do{
-        ret = avcodec_send_packet(pCodecCtx_, pkt.get());
-        if(ret != 0 && ret != AVERROR(EAGAIN))
-        {
-            ERR_OUT(avcodec_send_packet,ret);
-            return false;
-        }
+    auto ret = avcodec_send_packet(pCodecCtx_, pkt.get());
+    if(ret != 0 && ret != AVERROR(EAGAIN))
+    {
+        ERR_OUT(avcodec_send_packet,ret);
+        return false;
+    }
 
-        int ret1 = 0;
-        while(true)
-        {
-            FramePtr pFrame(av_frame_alloc());
-            ret1 = avcodec_receive_frame(pCodecCtx_, pFrame.get());
-            if(ret1 != 0)
-                break;
-            if(!pFrame->hw_frames_ctx)
-                pFrame = swsFrame(pFrame);
+    int ret1 = 0;
+    while(true)
+    {
+        FramePtr pFrame(av_frame_alloc());
+        ret1 = avcodec_receive_frame(pCodecCtx_, pFrame.get());
+        if(ret1 != 0)
+            break;
+        if(!pFrame->hw_frames_ctx)
+            pFrame = swsFrame(pFrame);
 
-            frameMtx_.lock();
-            if(frameQue_.size() > c_cachedMaxFrames_)
-                qInfo()<<"drop some frame";
-            else
-                frameQue_.push(pFrame);
-            frameMtx_.unlock();
-        }
-        if(ret1 != AVERROR(EAGAIN))
-        {
-            ERR_OUT(avcodec_receive_frame,ret1);
-            return false;
-        }
-    }while(ret == AVERROR(EAGAIN));
+        frameMtx_.lock();
+        if(frameQue_.size() > c_cachedMaxFrames_)
+            qInfo()<<"drop some frame";
+        else
+            frameQue_.push(pFrame);
+        frameMtx_.unlock();
+    }
+    if(ret1 != AVERROR(EAGAIN))
+    {
+        ERR_OUT(avcodec_receive_frame,ret1);
+        return false;
+    }
     return true;
 }
 

@@ -95,6 +95,8 @@ private:
 
     bool openRemoveBsf();
 
+    void closeRemoveBsf();
+
     inline bool encoderOpened();
 
     bool openEncoder(AVBufferRef *pDevice);

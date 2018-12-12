@@ -24,6 +24,7 @@ void ConsoleRead::stop()
 {
     if(pThreadThread_)
     {
+        running_.store(false);
         pThreadThread_->detach();
         delete pThreadThread_;
         pThreadThread_ = nullptr;

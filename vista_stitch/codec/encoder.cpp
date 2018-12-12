@@ -47,7 +47,7 @@ public:
     {
     }
 
-    ~OutStream()
+    virtual ~OutStream()
     {
         this->stopThread();
     }
@@ -71,6 +71,7 @@ public:
     }
 
 protected :
+
     void startThread()
     {
         qCritical()<<"start output Thread url:"<<url_.c_str();
@@ -80,6 +81,10 @@ protected :
 
     void stopThread()
     {
+        if(!running_)
+            return;
+
+        qCritical()<<"stop output Thread url:"<<url_.c_str();
         running_.store(false);
         if(thread_.joinable())
             thread_.join();
@@ -121,6 +126,11 @@ class NaluStream : public OutStream
 {
 public:
     using OutStream::OutStream;
+
+    virtual ~NaluStream()
+    {
+        this->close();
+    }
 
     bool open()
     {
@@ -169,6 +179,11 @@ public:
     MuxerStream(const std::string& url, const std::string& muxer)
         : OutStream(url)
         , muxer_(muxer){}
+
+    virtual ~MuxerStream()
+    {
+        this->close();
+    }
 
     bool open(AVCodec* avc, AVCodecContext* avctx)
     {
@@ -483,6 +498,15 @@ bool Encoder::openRemoveBsf()
     }
 
     return true;
+}
+
+void Encoder::closeRemoveBsf()
+{
+    if(pBsfCtx_)
+    {
+        av_bsf_free(&pBsfCtx_);
+        pBsfCtx_ = nullptr;
+    }
 }
 
 bool Encoder::encoderOpened()

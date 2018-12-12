@@ -50,6 +50,13 @@ int main(int argc, char *argv[])
     if(!root.endsWith("/"))
         root.append("/");
 
+    QDir rootDir(root);
+    if(!rootDir.exists())
+    {
+        qWarning()<<"volume: ["<<root<<"] not exist.";
+        return -3;
+    }
+
     InitLog(root);
     qDebug()<<"Log start...";
     qWarning()<<"Log start...";
@@ -63,14 +70,14 @@ int main(int argc, char *argv[])
     if(param.empty())
     {
         qCritical()<<"Can not find vista configure anywhere.";
-        return -3;
+        return -4;
     }
 
     cfg::PanoNode pn;
     if(!cfg::parseConfigure(param,pn))
     {
         qCritical()<<"Can not parse vista configure.";
-        return -4;
+        return -5;
     }
     qDebug()<<sys_info::information();
     qDebug()<<param.c_str();
@@ -85,7 +92,7 @@ int main(int argc, char *argv[])
     if(!pano->open())
     {
         qCritical()<<"Start vista panorama module failed!";
-        return -5;
+        return -6;
     }
 
     auto retCode = a.exec();
@@ -101,9 +108,6 @@ int main(int argc, char *argv[])
 
 void LogOutMessage(QtMsgType type, const QMessageLogContext& content, const QString& msg)
 {
-    static QMutex mutex;
-    mutex.lock();
-
     QString contextInfo = QString("File[%1] Line[%2]").arg(QString(content.file)).arg(content.line);
     QString dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss:zzz");
     QString message = QString("%1 %2 %3").arg(dateTime).arg(contextInfo).arg(msg);
@@ -128,8 +132,6 @@ void LogOutMessage(QtMsgType type, const QMessageLogContext& content, const QStr
     default:
         break;
     }
-
-    mutex.unlock();
     spdlog::get(APP_NAME)->flush();
 }
 
