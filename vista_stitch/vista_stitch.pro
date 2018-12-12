@@ -14,7 +14,10 @@ contains(QMAKE_TARGET.arch,x86_64) {
 }else{
     ARCH = x86
 }
-win32: OS = win
+win32:{
+    OS = win
+    LIBS += $$PWD/crashrpt_v.1.4.3/CrashRpt1403.lib
+}
 unix: OS = unix
 
 CONFIG(debug, debug|release){
@@ -35,7 +38,8 @@ SOURCES += main.cpp \
     configure.cpp \
     console_read.cpp \
     cmd_flags.cpp \
-    panorama.cpp
+    panorama.cpp \
+    dump_tool.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -54,8 +58,8 @@ HEADERS += \
     console_read.h \
     cmd_flags.h \
     panorama.h \
-    json.hpp
+    json.hpp \
+    dump_tool.h
 
 INCLUDEPATH += $$PWD
 
-message($$INCLUDEPATH)

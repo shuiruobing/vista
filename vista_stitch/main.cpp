@@ -10,6 +10,7 @@
 #include "configure.h"
 #include "panorama.h"
 #include "spdlog/spdlog.h"
+#include "dump_tool.h"
 
 #ifndef APP_NAME
 #define APP_NAME "vista_stitch"
@@ -62,6 +63,13 @@ int main(int argc, char *argv[])
     qWarning()<<"Log start...";
     qCritical()<<"Log start...";
 
+    DumpTool dumpTool(root);
+    if(!dumpTool.init())
+    {
+        qCritical()<<"dump tool init failed!";
+        return -4;
+    }
+
     QString vistaFile = root + "vista_stitch.json";
     std::string param = G_Flag->parameter().toStdString();
     if(param.empty())
@@ -70,14 +78,14 @@ int main(int argc, char *argv[])
     if(param.empty())
     {
         qCritical()<<"Can not find vista configure anywhere.";
-        return -4;
+        return -5;
     }
 
     cfg::PanoNode pn;
     if(!cfg::parseConfigure(param,pn))
     {
         qCritical()<<"Can not parse vista configure.";
-        return -5;
+        return -6;
     }
     qDebug()<<sys_info::information();
     qDebug()<<param.c_str();
@@ -92,7 +100,7 @@ int main(int argc, char *argv[])
     if(!pano->open())
     {
         qCritical()<<"Start vista panorama module failed!";
-        return -6;
+        return -7;
     }
 
     auto retCode = a.exec();
