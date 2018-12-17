@@ -36,7 +36,7 @@ public:
 
     ~Decoder();
 
-    void open(AVBufferRef* pd);
+    void open(const Options& fmtOpts, const Options& decodeOpts, AVBufferRef* pd);
 
     void close();
 
@@ -130,7 +130,7 @@ private:
     std::atomic_int avgFps_{0};
 
     FILE* pFile_{nullptr};
-    system_clock::time_point lastPacketTime_;
+    steady_clock::time_point lastPacketTime_;
 };
 
 #endif // DECODER_H

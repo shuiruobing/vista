@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <map>
 
 extern "C"
 {
@@ -55,5 +56,10 @@ public:
 
 std::string avErrStr(int code);
 #define AV_ERR(code) avErrStr(code).c_str()
+
+//codec parameter for ffmpeg options
+using Options = std::map<std::string, std::string>;
+using OptionItem = std::pair<const std::string, std::string>;
+
 
 #endif // CODEC_H

@@ -1,4 +1,4 @@
-#include "decoder.h"
+﻿#include "decoder.h"
 #include <QDebug>
 
 #define ERR_OUT(FUNC_NAME, CODE) qCritical()\
@@ -53,8 +53,8 @@ Decoder::Decoder(int id, const std::string &url, int cachePacketGops, int cacheF
 //    {
 //        av_dict_set(&pFmtDict_, "rtsp_transport", "tcp",0);
 //    }
-    av_dict_set(&pFmtDict_, "stimeout", "5000000", 0);   //tcp 5s
-    av_dict_set(&pFmtDict_, "max_delay", "5000000", 0);
+//    av_dict_set(&pFmtDict_, "stimeout", "5000000", 0);   //tcp 5s
+//    av_dict_set(&pFmtDict_, "max_delay", "5000000", 0);
 //    av_dict_set(&pFmtDict_, "fflags", "nobuffer", 0);
 //    av_dict_set(&pFmtDict_, "recv_buffer_size", "100000", 0);
 //    av_dict_set(&pFmtDict_, "probesize", "500000", 0);
@@ -66,9 +66,17 @@ Decoder::~Decoder()
     this->close();
 }
 
-void Decoder::open(AVBufferRef *pd)
+void Decoder::open(const Options& fmtOpts, const Options& decodeOpts, AVBufferRef *pd)
 {
     qDebug()<<"["<<c_id_<<"]Will open url:"<<c_url_.c_str();
+
+    //设置format参数和解码参数
+    for(auto e : fmtOpts)
+        av_dict_set(&pFmtDict_, e.first.c_str(), e.second.c_str(), 0);
+    for(auto e : decodeOpts)
+        av_dict_set(&pCodecDict_, e.first.c_str(), e.second.c_str(), 0);
+
+    //启动线程
     working_ = true;
     workThread_ = std::thread(&Decoder::workThreadFunc, this, pd);
 }
@@ -153,8 +161,6 @@ void Decoder::decodeThreadFunc(std::atomic_bool &running)
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
-        qWarning()<<"id:"<<c_id_<<"^^^^^^^decode a frame";
-
         packetMtx_.lock();
         PacketPtr pkt = packetQue_.front();
         packetQue_.pop();
@@ -177,6 +183,9 @@ bool Decoder::openInput(const char *url)
         ERR_OUT(avformat_open_input, ret);
         return false;
     }
+    this->lastPacketTime_ = steady_clock::now();
+    pFmtCtx_->interrupt_callback.callback = &Decoder::interruptVideoStream;
+    pFmtCtx_->interrupt_callback.opaque = this;
 
     pFmtCtx_->flags |= AVFMT_FLAG_NONBLOCK;
     qDebug()<<"["<<c_id_<<"]"<<__FUNCTION__<<"success!";
@@ -394,9 +403,7 @@ bool Decoder::setDevice(AVBufferRef *pd)
 bool Decoder::readPacket()
 {
     PacketPtr pkt(av_packet_alloc());
-    qWarning()<<"["<<c_id_<<"] beforedata:";
     int ret = av_read_frame(pFmtCtx_, pkt.get());
-    qWarning()<<"["<<c_id_<<"] afterdata ret:"<<ret<<", stream_id:"<<pkt->stream_index;
     if(ret != 0)
     {
         WARN_OUT(av_read_frame,ret);
@@ -406,7 +413,7 @@ bool Decoder::readPacket()
     int maxPkts = pCodecCtx_->gop_size * c_cachedMaxGops_;
     if(pkt->stream_index == pStream_->index)
     {
-        std::chrono::system_clock::now();
+        this->lastPacketTime_ = steady_clock::now();
         packetMtx_.lock();
         if(packetQue_.size() > static_cast<size_t>(maxPkts))
             qCritical()<<"["<<c_url_.c_str()<<"]"<<" drop packet.";
@@ -448,7 +455,6 @@ bool Decoder::decodePacket(PacketPtr pkt)
         ERR_OUT(avcodec_receive_frame,ret1);
         return false;
     }
-    qWarning()<<"*****id:"<<c_id_<<" after decode....";
     return true;
 }
 
@@ -474,8 +480,12 @@ int Decoder::interruptVideoStream(void *opauqe)
     Decoder* p = static_cast<Decoder*>(opauqe);
     if(!p)
         return 1;
-//    auto now = steady_clock::now();
-//    auto d = now - p->lastPacketTime_;
-//    now.
+
+    seconds span = duration_cast<seconds>(steady_clock::now() - p->lastPacketTime_);
+    if(span.count() > 5)
+    {
+        qWarning()<<"Decoder["<<p->c_id_<<"] time out(5s)";
+        return 1;
+    }
     return 0;
 }

@@ -1,4 +1,4 @@
-#include "panorama.h"
+﻿#include "panorama.h"
 #include "configure.h"
 #include <QDebug>
 #include <algorithm>
@@ -173,8 +173,12 @@ bool Panorama::open()
         return false;
     }
 
+    Options fmtOpts = {{"stimeout", "5000000"}
+                      //,{"max_delay","5000000"}
+                      ,{"reorder_queue_size","50000"}};
+
     for(Decoder* pd : decoders_)
-        pd->open(c_decodeHW_ ? pDevice_ : nullptr);
+        pd->open(fmtOpts,Options{},c_decodeHW_ ? pDevice_ : nullptr);
     return true;
 }
 
