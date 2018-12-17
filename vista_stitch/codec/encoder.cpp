@@ -159,7 +159,9 @@ protected:
                 if(pb->error)
                     avio_closep(&pb);
                 else if(pkt != nullptr)
+                {
                     avio_write(pb, pkt->data, pkt->size);
+                }
             }
             else
                 this->clearPacket();
@@ -264,16 +266,23 @@ private:
  * **************************************************************/
 
 
-Encoder::Encoder(const OutParam &muxerParam, const std::string &naluUrl, int maxCached)
-    : c_maxCached_(maxCached)
+Encoder::Encoder(const OutParam &muxerParam, const std::string &naluUrl, const std::string &fileName, int maxCached)
+    : fileName_(fileName)
+    , c_maxCached_(maxCached)
     , pMuxerStream_(new MuxerStream(muxerParam.url,muxerParam.muxer))
     , pNaluStream_(new NaluStream(naluUrl))
 {
+    pFile_ = fopen(fileName_.c_str(), "wb+");
 }
 
 Encoder::~Encoder()
 {
     this->close();
+    if(pFile_)
+    {
+        fclose(pFile_);
+        pFile_ = nullptr;
+    }
 }
 
 bool Encoder::open(const EncodeParam& param, AVBufferRef *pDevice)
@@ -533,7 +542,7 @@ void Encoder::encode()
         int ret = avcodec_send_frame(pCodecCtx_, pFrame.get());
         if(ret != AVERROR(EAGAIN) && ret != 0)
         {
-            qDebug()<<"error:"<<AV_ERR(ret);
+            qCritical()<<"error:"<<AV_ERR(ret);
             encoding_.store(false);
             break;
         }

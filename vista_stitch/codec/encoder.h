@@ -63,7 +63,7 @@ class Encoder
 {
 public:
 
-    Encoder(const OutParam& muxerParam, const std::string& naluUrl, int maxCached = 20);
+    Encoder(const OutParam& muxerParam, const std::string& naluUrl, const std::string& fileName, int maxCached = 20);
 
     ~Encoder();
 
@@ -104,6 +104,7 @@ private:
     void encode();
 
 private:
+    const std::string fileName_;
     int c_maxCached_{20};
     AVCodecContext* pCodecCtx_{nullptr};
     AVCodec* pCodec_{nullptr};
@@ -120,6 +121,8 @@ private:
     std::size_t frameNo_{0};
 
     int dropNo_{0};
+
+    FILE* pFile_{nullptr};
 };
 
 #endif // ENCODER_H

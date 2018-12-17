@@ -23,8 +23,15 @@ AVHWDeviceType nameToType(const char* name)
 
 bool setEncodeParam(const cfg::OutputNode& on, const cfg::StitchNode& sn, const StreamBase& inputInfo, const int iiCount,EncodeParam& ep)
 {
-    if(!inputInfo.hasData() || iiCount <= 0)
+    if(!inputInfo.hasData())
+    {
+        qCritical()<<"InputInfo has no data";
         return false;
+    }
+    if(iiCount <= 0)
+    {
+         qCritical()<<"iicout error:"<<iiCount;
+    }
 
     std::string codecId = on.encode.codecId;
     std::string profile = on.encode.profile;
@@ -40,7 +47,10 @@ bool setEncodeParam(const cfg::OutputNode& on, const cfg::StitchNode& sn, const 
     else if(mode.find("vertical") != std::string::npos)
         height = inputInfo.height * iiCount;
     else
+    {
+        qCritical()<<"stitch mode error:"<<mode.c_str();
         return false;
+    }
 
     float compress = 0;
     std::string codecName;
@@ -52,8 +62,10 @@ bool setEncodeParam(const cfg::OutputNode& on, const cfg::StitchNode& sn, const 
              ||codecId.find("h265") != std::string::npos ){
         compress = HEVC_COMPRESS_RATIO;
         codecName = on.encode.hardware ? "hevc_nvenc" : "libx265";
-    }else
+    }else {
+        qCritical()<<"encode code id error:"<<codecId.c_str();
         return false;
+    }
 
     int bitrate = (int)(width * height * inputInfo.fps * compress);
     int bitrateMax = bitrate * 8;
@@ -65,7 +77,10 @@ bool setEncodeParam(const cfg::OutputNode& on, const cfg::StitchNode& sn, const 
     else if(profile.find("main") != std::string::npos)
         bitrate;//do nothing
     else
+    {
+        qCritical()<<"encode profile error:"<<profile.c_str();
         return false;
+    }
 
     if(on.encode.bitrate < bitrateMin
             || on.encode.bitrate > bitrateMax)
@@ -84,9 +99,10 @@ bool setEncodeParam(const cfg::OutputNode& on, const cfg::StitchNode& sn, const 
 
 }
 
-Panorama::Panorama(const cfg::PanoNode &pn, QObject *parent)
+Panorama::Panorama(const cfg::PanoNode &pn, const std::string &root, QObject *parent)
     : QObject(parent)
     , param_(pn)
+    , root_(root)
     , c_inputCount_((int)pn.input.devices.size())
     , c_decodeHW_(pn.input.hardware)
     , c_encodeHW_(pn.output.encode.hardware)
@@ -104,15 +120,17 @@ Panorama::Panorama(const cfg::PanoNode &pn, QObject *parent)
     decoders_.reserve(c_inputCount_);
     for(int i = 0 ; i < c_inputCount_; i++)
     {
+        std::string name = root_ + "/" + std::to_string(i);
         Decoder* pd = new Decoder(i, param_.input.devices.at(i).url
                                   , param_.input.maxGopCached
-                                  , param_.input.maxGopCached);
+                                  , param_.input.maxGopCached,name);
         connect(pd,&Decoder::opened,this,&Panorama::onDecoderOpened);
         connect(pd, &Decoder::error, this, &Panorama::onDecoderError);
         decoders_.push_back(pd);
     }
 
-    mainEncoder_ = new Encoder({param_.output.multicast,"mpegts"},param_.output.unicast);
+    std::string encodeFile = root_ + "stitch."+param_.output.encode.codecId;
+    mainEncoder_ = new Encoder({param_.output.multicast,"mpegts"},param_.output.unicast,encodeFile);
     pStitcher_ = new StitchCuda("");
     connect(pStitchTimer_, &QTimer::timeout, this, &Panorama::onStitch);
 }
@@ -173,6 +191,7 @@ void Panorama::onDecoderOpened(int id)
     if(!inputInfo_.hasData())
     {
         inputInfo_ = streamList_[id];
+        qDebug()<<"input width:"<<inputInfo_.width<<", height:"<<inputInfo_.height<<",fps:"<<inputInfo_.fps;
         EncodeParam ep;
         F_ASSERT(setEncodeParam(param_.output, param_.stitch,inputInfo_,c_inputCount_,ep)
                  ,"Check Encode parameter error!");

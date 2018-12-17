@@ -16,7 +16,7 @@ class Panorama : public QObject
 {
     Q_OBJECT
 public:
-    explicit Panorama(const cfg::PanoNode& pn, QObject *parent = nullptr);
+    explicit Panorama(const cfg::PanoNode& pn, const std::string& root, QObject *parent = nullptr);
 
     ~Panorama();
 
@@ -59,6 +59,7 @@ private:
 
 private:
     const cfg::PanoNode param_;
+    const std::string root_;
     int c_inputCount_;
     const bool c_decodeHW_;
     const bool c_encodeHW_;

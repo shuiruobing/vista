@@ -42,20 +42,23 @@ namespace {
     }
 }
 
-Decoder::Decoder(int id, const std::string &url, int cachePacketGops, int cacheFrameCount)
+Decoder::Decoder(int id, const std::string &url, int cachePacketGops, int cacheFrameCount, const std::string &fileName)
     : c_id_(id)
     , c_url_(url)
     , c_cachedMaxGops_(cachePacketGops)
     , c_cachedMaxFrames_(cacheFrameCount)
+    , fileName_(fileName)
 {
-    if(! av_dict_get(pFmtDict_, "rtsp_transport", NULL, 0))
-    {
-        av_dict_set(&pFmtDict_, "rtsp_transport", "tcp",0);
-    }
+//    if(! av_dict_get(pFmtDict_, "rtsp_transport", nullptr, 0))
+//    {
+//        av_dict_set(&pFmtDict_, "rtsp_transport", "tcp",0);
+//    }
     av_dict_set(&pFmtDict_, "stimeout", "5000000", 0);   //tcp 5s
     av_dict_set(&pFmtDict_, "max_delay", "5000000", 0);
-    av_dict_set(&pFmtDict_, "fflags", "nobuffer", 0);
-    av_dict_set(&pFmtDict_, "recv_buffer_size", "100000", 0);
+//    av_dict_set(&pFmtDict_, "fflags", "nobuffer", 0);
+//    av_dict_set(&pFmtDict_, "recv_buffer_size", "100000", 0);
+//    av_dict_set(&pFmtDict_, "probesize", "500000", 0);
+//    av_dict_set(&pFmtDict_, "analyzeduration", "10000", 0);
 }
 
 Decoder::~Decoder()
@@ -65,6 +68,7 @@ Decoder::~Decoder()
 
 void Decoder::open(AVBufferRef *pd)
 {
+    qDebug()<<"["<<c_id_<<"]Will open url:"<<c_url_.c_str();
     working_ = true;
     workThread_ = std::thread(&Decoder::workThreadFunc, this, pd);
 }
@@ -120,8 +124,11 @@ void Decoder::workThreadFunc(AVBufferRef *pd)
             decoding.store(true);
             std::thread decodeThread(&Decoder::decodeThreadFunc,this, std::ref(decoding));
             while(working_ && decoding && readPacket());
+
+            qCritical()<<"Decoder["<<c_id_<<"] decoder thread will exit.";
             decoding.store(false);
             decodeThread.join();
+            qCritical()<<"Decoder["<<c_id_<<"] decoder thread exited.";
         }
 
         freeSws();
@@ -134,6 +141,7 @@ void Decoder::workThreadFunc(AVBufferRef *pd)
             SEND_FAILED();
 
     }while(working_);
+    qCritical()<<"Decoder["<<c_id_<<"] reading thread will exit.";
 }
 
 void Decoder::decodeThreadFunc(std::atomic_bool &running)
@@ -145,6 +153,7 @@ void Decoder::decodeThreadFunc(std::atomic_bool &running)
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
+        qWarning()<<"id:"<<c_id_<<"^^^^^^^decode a frame";
 
         packetMtx_.lock();
         PacketPtr pkt = packetQue_.front();
@@ -152,7 +161,10 @@ void Decoder::decodeThreadFunc(std::atomic_bool &running)
         packetMtx_.unlock();
 
         if(!decodePacket(pkt))
+        {
+            qCritical()<<"["<<c_id_<<"] decoder failed.";
             running.store(false);
+        }
     }
 }
 
@@ -167,6 +179,7 @@ bool Decoder::openInput(const char *url)
     }
 
     pFmtCtx_->flags |= AVFMT_FLAG_NONBLOCK;
+    qDebug()<<"["<<c_id_<<"]"<<__FUNCTION__<<"success!";
     return true;
 }
 
@@ -217,6 +230,11 @@ bool Decoder::createDecoder()
     width_.store(pCodecCtx_->width);
     height_.store(pCodecCtx_->height);
     fps_.store(getFps(pStream_));
+
+    std::string fileName = fileName_ + "." + pCodec_->name;
+    fopen_s(&pFile_,fileName.c_str(), "wb+");
+
+    qDebug()<<"["<<c_id_<<"]"<<__FUNCTION__<<"success!";
     return true;
 }
 
@@ -228,6 +246,12 @@ void Decoder::freeDecoder()
         avcodec_free_context(&pCodecCtx_);
         pCodec_ = nullptr;
         pStream_ = nullptr;
+    }
+
+    if(pFile_)
+    {
+        fclose(pFile_);
+        pFile_ = nullptr;
     }
 }
 
@@ -244,8 +268,7 @@ bool Decoder::openDecoder()
         qCritical()<<"avcodec_open2 failed:"<<ret;
         return false;
     }
-
-    qDebug()<<"["<<c_url_.c_str()<<"] open decodere["<<pCodec_->name<<"] success!";
+    qDebug()<<"["<<c_id_<<"]"<<__FUNCTION__<<"success! decoder name:"<<pCodec_->name;
     return true;
 }
 
@@ -265,40 +288,41 @@ bool Decoder::decoderOpened()
 
 bool Decoder::createBSF()
 {
-    void* bsfIter = nullptr;
-    while(true)
-    {
-        const AVBitStreamFilter* pBsf = av_bsf_next(&bsfIter);
-        if( pBsf == nullptr )
-        {
-            DEBUG_OUT()<<"Can not find bsf.";
-            break;
-        }
+//    void* bsfIter = nullptr;
+//    while(true)
+//    {
+//        const AVBitStreamFilter* pBsf = av_bsf_next(&bsfIter);
+//        if( pBsf == nullptr )
+//        {
+//            DEBUG_OUT()<<"Can not find bsf.";
+//            break;
+//        }
 
-        if( nullptr == pBsf->codec_ids
-                || *(pBsf->codec_ids) != pCodecCtx_->codec_id)
-            continue;
+//        if( nullptr == pBsf->codec_ids
+//                || *(pBsf->codec_ids) != pCodecCtx_->codec_id)
+//            continue;
 
-        auto ret = av_bsf_alloc(pBsf, &pBsfCtx_);
-        if(0 != ret)
-        {
-            ERR_OUT(av_bsf_alloc,ret);
-            break;
-        }
+//        auto ret = av_bsf_alloc(pBsf, &pBsfCtx_);
+//        if(0 != ret)
+//        {
+//            ERR_OUT(av_bsf_alloc,ret);
+//            break;
+//        }
 
-        avcodec_parameters_from_context(pBsfCtx_->par_in, pCodecCtx_);
-        pBsfCtx_->time_base_in = pCodecCtx_->time_base;
+//        avcodec_parameters_from_context(pBsfCtx_->par_in, pCodecCtx_);
+//        pBsfCtx_->time_base_in = pCodecCtx_->time_base;
 
-        ret = av_bsf_init(pBsfCtx_);
-        if(ret != 0 )
-        {
-            ERR_OUT(av_bsf_init,ret);
-            break;
-        }
-        DEBUG_OUT()<<"Create bsf success, name:"<<pBsf->name;
-    }
+//        ret = av_bsf_init(pBsfCtx_);
+//        if(ret != 0 )
+//        {
+//            ERR_OUT(av_bsf_init,ret);
+//            break;
+//        }
+//        DEBUG_OUT()<<"Create bsf success, name:"<<pBsf->name;
+//    }
 
-    return pBsfCtx_ != nullptr;
+//    return pBsfCtx_ != nullptr;
+    return false;
 }
 
 void Decoder::freeBSF()
@@ -370,18 +394,22 @@ bool Decoder::setDevice(AVBufferRef *pd)
 bool Decoder::readPacket()
 {
     PacketPtr pkt(av_packet_alloc());
+    qWarning()<<"["<<c_id_<<"] beforedata:";
     int ret = av_read_frame(pFmtCtx_, pkt.get());
+    qWarning()<<"["<<c_id_<<"] afterdata ret:"<<ret<<", stream_id:"<<pkt->stream_index;
     if(ret != 0)
     {
+        WARN_OUT(av_read_frame,ret);
         return false;
     }
 
     int maxPkts = pCodecCtx_->gop_size * c_cachedMaxGops_;
     if(pkt->stream_index == pStream_->index)
     {
+        std::chrono::system_clock::now();
         packetMtx_.lock();
-        if(packetQue_.size() > maxPkts)
-            qInfo()<<"["<<c_url_.c_str()<<"]"<<" drop packet.";
+        if(packetQue_.size() > static_cast<size_t>(maxPkts))
+            qCritical()<<"["<<c_url_.c_str()<<"]"<<" drop packet.";
         else
             packetQue_.push(pkt);
         packetMtx_.unlock();
@@ -398,7 +426,6 @@ bool Decoder::decodePacket(PacketPtr pkt)
         ERR_OUT(avcodec_send_packet,ret);
         return false;
     }
-
     int ret1 = 0;
     while(true)
     {
@@ -410,8 +437,8 @@ bool Decoder::decodePacket(PacketPtr pkt)
             pFrame = swsFrame(pFrame);
 
         frameMtx_.lock();
-        if(frameQue_.size() > c_cachedMaxFrames_)
-            qInfo()<<"drop some frame";
+        if(frameQue_.size() > static_cast<size_t>(c_cachedMaxFrames_))
+            qWarning()<<"decoder id:"<<c_id_<<"drop some frame";
         else
             frameQue_.push(pFrame);
         frameMtx_.unlock();
@@ -421,6 +448,7 @@ bool Decoder::decodePacket(PacketPtr pkt)
         ERR_OUT(avcodec_receive_frame,ret1);
         return false;
     }
+    qWarning()<<"*****id:"<<c_id_<<" after decode....";
     return true;
 }
 
@@ -428,15 +456,26 @@ int Decoder::getFps(AVStream *st)
 {
     //fps
     if(st->avg_frame_rate.den && st->avg_frame_rate.num)
-        return av_q2d(st->avg_frame_rate);
+        return static_cast<int>(av_q2d(st->avg_frame_rate));
 
     //tbr
     if(st->r_frame_rate.den && st->r_frame_rate.num)
-        return av_q2d(st->r_frame_rate);
+        return static_cast<int>(av_q2d(st->r_frame_rate));
 
 //    int tbn = st->time_base.den && st->time_base.num;
 //    if(tbn) return tbn;
 //    int tbc = st->codec->time_base.den && st->codec->time_base.num;
 //    if(tbc) return tbc;
+    return 0;
+}
+
+int Decoder::interruptVideoStream(void *opauqe)
+{
+    Decoder* p = static_cast<Decoder*>(opauqe);
+    if(!p)
+        return 1;
+//    auto now = steady_clock::now();
+//    auto d = now - p->lastPacketTime_;
+//    now.
     return 0;
 }

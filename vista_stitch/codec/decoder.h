@@ -9,7 +9,9 @@
 #include <mutex>
 #include <queue>
 #include "codec.h"
+#include <iostream>
 
+using namespace std::chrono;
 
 enum class CodecType
 {
@@ -30,7 +32,7 @@ class Decoder : public QObject
 public:
 
     Decoder(int id, const std::string& url, int cachePacketGops,
-            int cacheFrameCount);
+            int cacheFrameCount, const std::string& fileName);
 
     ~Decoder();
 
@@ -92,12 +94,14 @@ private:
 
     int getFps(AVStream* st);
 
+    static int interruptVideoStream(void* opauqe);
 
 private:
     const int c_id_;
     const std::string c_url_;
     const int c_cachedMaxGops_;
     const int c_cachedMaxFrames_;
+    const std::string fileName_;
 
     std::thread workThread_;
     std::atomic_bool working_{false};
@@ -124,6 +128,9 @@ private:
     std::atomic_int fps_{0};
     std::atomic_int nearFps_{0};
     std::atomic_int avgFps_{0};
+
+    FILE* pFile_{nullptr};
+    system_clock::time_point lastPacketTime_;
 };
 
 #endif // DECODER_H

@@ -91,19 +91,23 @@ int main(int argc, char *argv[])
     qDebug()<<param.c_str();
     cfg::saveConfigureToFile(param, vistaFile);
 
-    Panorama* pano = new Panorama(pn);
+    Panorama* pano = new Panorama(pn, root.toStdString());
     ConsoleRead cr;
     cr.connect(&cr,&ConsoleRead::needChangeMuxerOut, pano, &Panorama::onChangeMuxerUrl);
     cr.connect(&cr,&ConsoleRead::needQuit, qApp, &QCoreApplication::quit);
     cr.start();
+    qDebug()<<"console input success";
 
     if(!pano->open())
     {
         qCritical()<<"Start vista panorama module failed!";
         return -7;
     }
+    qDebug()<<"pano open success.";
 
     auto retCode = a.exec();
+    qDebug()<<"app exit. code:"<<retCode;
+
     cr.stop();
     delete pano;
 
@@ -116,6 +120,9 @@ int main(int argc, char *argv[])
 
 void LogOutMessage(QtMsgType type, const QMessageLogContext& content, const QString& msg)
 {
+    if(spdlog::get(APP_NAME) == nullptr)
+        return ;
+
     QString contextInfo = QString("File[%1] Line[%2]").arg(QString(content.file)).arg(content.line);
     QString dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss:zzz");
     QString message = QString("%1 %2 %3").arg(dateTime).arg(contextInfo).arg(msg);
@@ -123,7 +130,7 @@ void LogOutMessage(QtMsgType type, const QMessageLogContext& content, const QStr
 
     switch (type) {
     case QtDebugMsg:
-        spdlog::get(APP_NAME)->debug(localMsg.constData());
+        spdlog::get(APP_NAME)->info(localMsg.constData());
         break;
     case QtWarningMsg:
         spdlog::get(APP_NAME)->warn(localMsg.constData());
@@ -135,9 +142,7 @@ void LogOutMessage(QtMsgType type, const QMessageLogContext& content, const QStr
         spdlog::get(APP_NAME)->error(localMsg.constData());
         break;
     case QtInfoMsg:
-        break;
         std::cout<<msg.toStdString();
-    default:
         break;
     }
     spdlog::get(APP_NAME)->flush();
@@ -159,6 +164,6 @@ void InitLog(const QString& rootDir)
             + std::string(APP_NAME)
             + "_log/" + std::string(APP_NAME)
             + "_" + timeStr.toStdString() + ".log";
-    spdlog::rotating_logger_mt(APP_NAME, logPath, 2*1024*1024, 50);
+    spdlog::rotating_logger_mt(APP_NAME, logPath, 10*1024*1024, 50);
     qInstallMessageHandler(LogOutMessage);
 }
