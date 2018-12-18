@@ -1,4 +1,4 @@
-#include "encoder.h"
+﻿#include "encoder.h"
 #include <QDebug>
 #include <future>
 
@@ -537,7 +537,9 @@ void Encoder::encode()
         FramePtr pFrame = frameQue_.front();
         frameQue_.pop();
         frameMtx_.unlock();
-        pFrame->pts = (++frameNo_)* (int)(1000*av_q2d(pCodecCtx_->time_base));
+        auto now = av_gettime_relative();
+        pFrame->pts = av_rescale_q(now, AVRational{1, AV_TIME_BASE},pCodecCtx_->time_base);
+        //pFrame->pts = (++frameNo_)* (int)(1000*av_q2d(pCodecCtx_->time_base));
 
         int ret = avcodec_send_frame(pCodecCtx_, pFrame.get());
         if(ret != AVERROR(EAGAIN) && ret != 0)

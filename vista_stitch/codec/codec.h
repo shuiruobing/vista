@@ -1,4 +1,4 @@
-#ifndef CODEC_H
+﻿#ifndef CODEC_H
 #define CODEC_H
 
 #include <memory>
@@ -9,7 +9,8 @@ extern "C"
 {
 #include "libavformat/avformat.h"
 #include "libavdevice/avdevice.h"
-#include "libavutil/hwcontext_cuda.h"
+#include "libavutil/avutil.h"
+#include "libavutil/time.h"
 #include "libswscale/swscale.h"
 #include <cuda.h>
 }
