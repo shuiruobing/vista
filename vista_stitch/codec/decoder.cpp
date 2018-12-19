@@ -59,6 +59,7 @@ Decoder::Decoder(int id, const std::string &url, int cachePacketGops, int cacheF
 //    av_dict_set(&pFmtDict_, "recv_buffer_size", "100000", 0);
 //    av_dict_set(&pFmtDict_, "probesize", "500000", 0);
 //    av_dict_set(&pFmtDict_, "analyzeduration", "10000", 0);
+    lastPacketTime_ = steady_clock::now();
 }
 
 Decoder::~Decoder()
@@ -482,7 +483,7 @@ int Decoder::interruptVideoStream(void *opauqe)
         return 1;
 
     seconds span = duration_cast<seconds>(steady_clock::now() - p->lastPacketTime_);
-    if(span.count() > 5)
+    if(span.count() > 15)
     {
         qWarning()<<"Decoder["<<p->c_id_<<"] time out(5s)";
         return 1;

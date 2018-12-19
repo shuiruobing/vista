@@ -1,4 +1,4 @@
-#ifndef ENCODER_H
+﻿#ifndef ENCODER_H
 #define ENCODER_H
 
 #include <queue>
@@ -121,6 +121,7 @@ private:
     std::size_t frameNo_{0};
 
     int dropNo_{0};
+    int lastPts_{0};
 
     FILE* pFile_{nullptr};
 };

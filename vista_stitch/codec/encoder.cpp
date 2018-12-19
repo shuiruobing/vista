@@ -134,12 +134,14 @@ public:
 
     bool open()
     {
+		qDebug() << "NaluStream open.";
         this->startThread();
         return true;
     }
 
     void close()
     {
+		qDebug() << "NaluStream stop.";
         this->stopThread();
     }
 
@@ -150,21 +152,29 @@ protected:
         AVIOContext* pb = nullptr;
         while(running_)
         {
-            if(!pb)
-                avio_open(&pb, url.c_str(), AVIO_FLAG_WRITE);
-
-            if(pb)
+            if(pb == nullptr)
             {
-                PacketPtr pkt = this->getPacket();
-                if(pb->error)
-                    avio_closep(&pb);
-                else if(pkt != nullptr)
-                {
-                    avio_write(pb, pkt->data, pkt->size);
-                }
+                auto ret = avio_open(&pb, url.c_str(), AVIO_FLAG_WRITE);
+                if(ret < 0)
+                    pb = nullptr;
+//                else
+//                    qDebug()<<"Success Output nalu url:"<<url.c_str()<<"pb:";
+            }
+
+            if(pb == nullptr)
+            {
+                this->clearPacket();
             }
             else
-                this->clearPacket();
+            {
+                PacketPtr pkt = this->getPacket();
+                if(pkt != nullptr && pkt->size > 0 && pkt->data != nullptr)
+                {
+                    (pb->error != 0) ? avio_closep(&pb)
+                                     : avio_write(pb, pkt->data, pkt->size);
+                }
+            }
+
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
@@ -218,8 +228,11 @@ public:
     void close()
     {
         this->stopThread();
-        avformat_free_context(pFmt_);
-        pFmt_ = nullptr;
+        if(pFmt_)
+        {
+            avformat_free_context(pFmt_);
+            pFmt_ = nullptr;
+        }
     }
 
 protected:
@@ -241,8 +254,16 @@ protected:
             if(pFmt_->pb)
             {
                 PacketPtr pkt = this->getPacket();
-                if( pkt != nullptr && 0 > av_write_frame(pFmt_, pkt.get()))
-                    avio_closep(&pFmt_->pb);
+                if(pkt != nullptr )
+                {
+                    auto ret = av_interleaved_write_frame(pFmt_, pkt.get());
+                    if(ret < 0)
+                    {
+                        avio_closep(&pFmt_->pb);
+                        qCritical()<<"av_interleaved_write_frame muxer:"
+                                   <<url.c_str()<<" error:"<<ret;
+                    }
+                }
             }
             else
                 this->clearPacket();
@@ -539,6 +560,9 @@ void Encoder::encode()
         frameMtx_.unlock();
         auto now = av_gettime_relative();
         pFrame->pts = av_rescale_q(now, AVRational{1, AV_TIME_BASE},pCodecCtx_->time_base);
+        if(pFrame->pts <= lastPts_)
+            pFrame->pts = lastPts_ +1;
+        lastPts_ = pFrame->pts;
         //pFrame->pts = (++frameNo_)* (int)(1000*av_q2d(pCodecCtx_->time_base));
 
         int ret = avcodec_send_frame(pCodecCtx_, pFrame.get());
@@ -559,8 +583,10 @@ void Encoder::encode()
             if(0 == av_bsf_send_packet(pBsfCtx_, pkt.get())
                     && 0 == av_bsf_receive_packet(pBsfCtx_,pkt.get()))
             {
+                if(pkt->pts < pkt->dts)
+                    pkt->dts = pkt->pts;
                 pMuxerStream_->writeData(pkt);
-                pNaluStream_->writeData(pkt);
+                pNaluStream_->writeData(PacketPtr(av_packet_clone(pkt.get())));
             }
         }
     }

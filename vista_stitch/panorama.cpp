@@ -175,6 +175,7 @@ bool Panorama::open()
 
     Options fmtOpts = {{"stimeout", "5000000"}
                       //,{"max_delay","5000000"}
+                      //,{"buffer_size", "1024000"}
                       ,{"reorder_queue_size","50000"}};
 
     for(Decoder* pd : decoders_)
