@@ -145,22 +145,36 @@ public:
         this->stopThread();
     }
 
+    static int Interrupt(void* opauqe)
+    {
+        NaluStream* p = static_cast<NaluStream*>(opauqe);
+        if(!p)
+            return 1;
+        return p->running_ ? 0 : 1;
+    }
+
 protected:
     virtual bool run(const std::string& url) override
     {
         qCritical()<<"Output nalu url:"<<url.c_str();
         AVIOContext* pb = nullptr;
+        AVIOInterruptCB cb;
+        cb.callback = &NaluStream::Interrupt;
+        cb.opaque = this;
         while(running_)
         {
             if(pb == nullptr)
             {
-                auto ret = avio_open(&pb, url.c_str(), AVIO_FLAG_WRITE);
+                auto ret = avio_open2(&pb, url.c_str(), AVIO_FLAG_WRITE,&cb,nullptr);
                 if(ret < 0)
                     pb = nullptr;
-//                else
-//                    qDebug()<<"Success Output nalu url:"<<url.c_str()<<"pb:";
+                else if(url.find("tcp") != std::string::npos &&
+                        url.find("listen") != std::string::npos)
+                {
+                    qCritical()<<"Exit?(not sure) Output nalu Url["<<url.c_str()
+                               <<"] avio_open2 failed:"<<ret;
+                }
             }
-
             if(pb == nullptr)
             {
                 this->clearPacket();
