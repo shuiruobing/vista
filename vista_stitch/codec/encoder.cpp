@@ -270,9 +270,17 @@ protected:
                 PacketPtr pkt = this->getPacket();
                 if(pkt != nullptr )
                 {
+                    //printf("%I64d,%I64d\n",pkt->pts,AV_NOPTS_VALUE);
+                    if(pkt->pts == AV_NOPTS_VALUE || pkt->dts == AV_NOPTS_VALUE)
+                    {
+                        pkt->pts = AV_NOPTS_VALUE;
+                    }
                     auto ret = av_interleaved_write_frame(pFmt_, pkt.get());
                     if(ret < 0)
                     {
+                        if(ret == -22)
+                            qCritical()<<"av_interleaved_write_frame -22:"
+                                       <<"pkt[pts="<<pkt->pts<<",dts="<<pkt->dts<<"]";
                         avio_closep(&pFmt_->pb);
                         qCritical()<<"av_interleaved_write_frame muxer:"
                                    <<url.c_str()<<" error:"<<ret;
@@ -285,7 +293,9 @@ protected:
         }
 
         if(pFmt_->pb)
+        {
             avio_closep(&pFmt_->pb);
+        }
 
         qCritical()<<"output muxer exit:"<<url.c_str();
         return true;
@@ -366,6 +376,7 @@ void Encoder::run()
     if(!encoderOpened())
         return ;
 
+    lastPts_ = 0;
     encoding_ = true;
     encodeThread_ = std::thread(&Encoder::encode,this);
 }
@@ -374,7 +385,10 @@ void Encoder::send(FramePtr pFrame)
 {
     frameMtx_.lock();
     if(frameQue_.size() < c_maxCached_)
+    {
+        pFrame->pts = av_gettime_relative();
         frameQue_.push(pFrame);
+    }
     else if(++dropNo_ > c_maxCached_)
     {
         qWarning()<<"Encoder drop no:"<<c_maxCached_;
@@ -572,12 +586,7 @@ void Encoder::encode()
         FramePtr pFrame = frameQue_.front();
         frameQue_.pop();
         frameMtx_.unlock();
-        auto now = av_gettime_relative();
-        pFrame->pts = av_rescale_q(now, AVRational{1, AV_TIME_BASE},pCodecCtx_->time_base);
-        if(pFrame->pts <= lastPts_)
-            pFrame->pts = lastPts_ +1;
-        lastPts_ = pFrame->pts;
-        //pFrame->pts = (++frameNo_)* (int)(1000*av_q2d(pCodecCtx_->time_base));
+        pFrame->pts = av_rescale_q(pFrame->pts, AVRational{1, AV_TIME_BASE},pCodecCtx_->time_base);
 
         int ret = avcodec_send_frame(pCodecCtx_, pFrame.get());
         if(ret != AVERROR(EAGAIN) && ret != 0)
@@ -597,10 +606,21 @@ void Encoder::encode()
             if(0 == av_bsf_send_packet(pBsfCtx_, pkt.get())
                     && 0 == av_bsf_receive_packet(pBsfCtx_,pkt.get()))
             {
-                if(pkt->pts < pkt->dts)
+                if(pkt->pts != lastPts_ + 1)
+                {
+                    if(lastPts_ == 0)
+                        lastPts_ = pkt->pts;
+                    else
+                        pkt->pts = lastPts_ + 1;
+                }
+                lastPts_ = pkt->pts;
+
+                if(pkt->dts != pkt->pts)
                     pkt->dts = pkt->pts;
+
+                PacketPtr pktCpy(av_packet_clone(pkt.get()));
                 pMuxerStream_->writeData(pkt);
-                pNaluStream_->writeData(PacketPtr(av_packet_clone(pkt.get())));
+                pNaluStream_->writeData(pktCpy);
             }
         }
     }

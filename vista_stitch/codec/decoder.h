@@ -1,4 +1,4 @@
-#ifndef DECODER_H
+﻿#ifndef DECODER_H
 #define DECODER_H
 
 #include <QObject>
@@ -97,6 +97,8 @@ private:
     static int interruptVideoStream(void* opauqe);
 
 private:
+    enum{MAX_DROP_FRAME_PRINT =100};
+
     const int c_id_;
     const std::string c_url_;
     const int c_cachedMaxGops_;
@@ -131,6 +133,9 @@ private:
 
     FILE* pFile_{nullptr};
     steady_clock::time_point lastPacketTime_;
+
+    steady_clock::time_point dropFrameStartTime_;
+    int dropFrameCount_{0};
 };
 
 #endif // DECODER_H

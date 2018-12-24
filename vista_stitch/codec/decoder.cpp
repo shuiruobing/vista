@@ -129,6 +129,7 @@ void Decoder::workThreadFunc(AVBufferRef *pd)
            && (pd ? setDevice(pd):true) && openDecoder()
            && (!pd ? createSws(): true))
         {
+            dropFrameStartTime_ = steady_clock::now();
             SEND_SUCCESS();
             decoding.store(true);
             std::thread decodeThread(&Decoder::decodeThreadFunc,this, std::ref(decoding));
@@ -404,11 +405,17 @@ bool Decoder::setDevice(AVBufferRef *pd)
 bool Decoder::readPacket()
 {
     PacketPtr pkt(av_packet_alloc());
+    if(pkt == nullptr)
+    {
+        DEBUG_OUT()<<"av_packet_alloc failed!!!!";
+        return false;
+    }
+
     int ret = av_read_frame(pFmtCtx_, pkt.get());
     if(ret != 0)
     {
         WARN_OUT(av_read_frame,ret);
-        return false;
+        return ret == -12;
     }
 
     int maxPkts = pCodecCtx_->gop_size * c_cachedMaxGops_;
@@ -429,11 +436,13 @@ bool Decoder::readPacket()
 bool Decoder::decodePacket(PacketPtr pkt)
 {
     auto ret = avcodec_send_packet(pCodecCtx_, pkt.get());
-    if(ret != 0 && ret != AVERROR(EAGAIN))
+    if(ret != 0 && ret != AVERROR(EAGAIN)) //这里需要判断ANDI（无效数据）
     {
         ERR_OUT(avcodec_send_packet,ret);
+        return ret == AVERROR_INVALIDDATA;  //ANDI, 如果是无效数据，不认为错误?
         return false;
     }
+
     int ret1 = 0;
     while(true)
     {
@@ -446,7 +455,15 @@ bool Decoder::decodePacket(PacketPtr pkt)
 
         frameMtx_.lock();
         if(frameQue_.size() > static_cast<size_t>(c_cachedMaxFrames_))
-            qWarning()<<"decoder id:"<<c_id_<<"drop some frame";
+        {
+            if(++dropFrameCount_ >= MAX_DROP_FRAME_PRINT)
+            {
+                milliseconds useTime = duration_cast<milliseconds>(steady_clock::now()-dropFrameStartTime_);
+                qWarning()<<"decoder id:"<<c_id_<<"drop frames["<<MAX_DROP_FRAME_PRINT<<"] use time:"<< useTime.count();
+                dropFrameCount_ = 0;
+                dropFrameStartTime_ = steady_clock::now();
+            }
+        }
         else
             frameQue_.push(pFrame);
         frameMtx_.unlock();
@@ -481,11 +498,16 @@ int Decoder::interruptVideoStream(void *opauqe)
     Decoder* p = static_cast<Decoder*>(opauqe);
     if(!p)
         return 1;
+    if(!(p->working_))
+    {
+        qWarning()<<"Decoder["<<p->c_id_<<"] working = false. interrupt !";
+        return 1;
+    }
 
     seconds span = duration_cast<seconds>(steady_clock::now() - p->lastPacketTime_);
     if(span.count() > 15)
     {
-        qWarning()<<"Decoder["<<p->c_id_<<"] time out(5s)";
+        qWarning()<<"Decoder["<<p->c_id_<<"] time out(15s), intterrupt !";
         return 1;
     }
     return 0;

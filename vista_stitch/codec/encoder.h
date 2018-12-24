@@ -118,10 +118,8 @@ private:
     NaluStream* pNaluStream_;
     MuxerStream* pMuxerStream_;
 
-    std::size_t frameNo_{0};
-
     int dropNo_{0};
-    int lastPts_{0};
+    long long lastPts_{0};
 
     FILE* pFile_{nullptr};
 };
