@@ -42,8 +42,9 @@ AVPixelFormat getPixFmt(AVHWDeviceType type, AVCodec* pc)
 class OutStream
 {
 public:
-    OutStream(const std::string& url)
+    OutStream(const std::string& url, int maxCache)
         : url_(url)
+        , c_maxCache(maxCache)
     {
     }
 
@@ -65,7 +66,8 @@ public:
     bool writeData(PacketPtr pkt)
     {
         mtx_.lock();
-        pktQue_.push_back(pkt);
+        if(pktQue_.size() < c_maxCache)
+            pktQue_.push_back(pkt);
         mtx_.unlock();
         return true;
     }
@@ -114,6 +116,7 @@ protected:
     virtual bool run(const std::string& url) = 0;
 
 protected :
+    const int c_maxCache{0};
     std::string url_;
     std::atomic_bool running_{false};
     std::mutex mtx_;
@@ -202,8 +205,8 @@ protected:
 class MuxerStream : public OutStream
 {
 public:
-    MuxerStream(const std::string& url, const std::string& muxer)
-        : OutStream(url)
+    MuxerStream(const std::string& url, int maxCache, const std::string& muxer)
+        : OutStream(url,maxCache)
         , muxer_(muxer){}
 
     virtual ~MuxerStream()
@@ -314,8 +317,8 @@ private:
 Encoder::Encoder(const OutParam &muxerParam, const std::string &naluUrl, const std::string &fileName, int maxCached)
     : fileName_(fileName)
     , c_maxCached_(maxCached)
-    , pMuxerStream_(new MuxerStream(muxerParam.url,muxerParam.muxer))
-    , pNaluStream_(new NaluStream(naluUrl))
+    , pMuxerStream_(new MuxerStream(muxerParam.url,10,muxerParam.muxer))
+    , pNaluStream_(new NaluStream(naluUrl,10))
 {
     pFile_ = fopen(fileName_.c_str(), "wb+");
 }

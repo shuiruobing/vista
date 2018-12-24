@@ -415,7 +415,7 @@ bool Decoder::readPacket()
     if(ret != 0)
     {
         WARN_OUT(av_read_frame,ret);
-        return ret == -12;
+        return false;
     }
 
     int maxPkts = pCodecCtx_->gop_size * c_cachedMaxGops_;
