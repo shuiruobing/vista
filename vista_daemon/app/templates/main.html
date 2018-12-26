@@ -1,281 +1,461 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>拼接服务配置</title>
+		<link rel="stylesheet" href="static/layui/css/layui.css" type="text/css"/> 
+		<link rel="stylesheet" href="static/layui/css/stich.css" type="text/css"/>
+		<script src="static/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/js/stich.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/js/stitch_form.js" type="text/javascript" charset="utf-8"></script>
+		
+		<style>
 
-<head>
-    <style type="text/css">
-        @charset "UTF-8";
-        [ng\:cloak],
-        [ng-cloak],
-        [data-ng-cloak],
-        [x-ng-cloak],
-        .ng-cloak,
-        .x-ng-cloak,
-        .ng-hide {
-            display: none !important;
-        }
-        
-        ng\:form {
-            display: block;
-        }
-    </style>
-    <title>Vista 系统</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
-    <meta http-equiv="Expires" content="0" />
-    <link rel="stylesheet" href="static/script/config/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="static/script/config/bootstrap/bootstrap-table.css" />
-    <link rel="stylesheet" href="static/script/ui/css/main.css" />
-    <script src="static/script/config/config/config.js"></script>
-    <script src="static/script/config/config/PublicParams.js"></script>
-    <script src="static/script/config/jquery/jquery.min.js"></script>
-    <script src="static/script/config/bootstrap/bootstrap.min.js"></script>
-    <script src="static/script/config/bootstrap/bootstrap-table.js"></script>
-    <script src="static/script/config/bootstrap/bootstrap-table-zh-CN.js"></script>
-    <script src="static/script/config/exfunc.js"></script>
-    <script src="static/script/config/system/main.js"></script>
-    <script>
-        document.write("<link type='text/css' href='static/ui/css/ui.css?version=" + new Date().getTime() + "' rel='stylesheet' />");
-    </script>
-</head>
+		/* 为了区分效果 */
+		div[carousel-item]>*{color: #fff;}
+		div[carousel-item]>*:nth-child(2n){background-color: #EEEEEE;}
+		div[carousel-item]>*:nth-child(2n+1){background-color: #F0F0F0;}
+		
+		.layui-nav-tree #third a{
+			font-size: 5px
+		}
+		</style>
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo"><img src="static/img/vista_daemon.png" class="layui-nav-img">Leopard</div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<ul class="layui-nav layui-layout-left">
+					<li class="layui-nav-item">
+						<a href=""></a>
+					</li>
+					<li class="layui-nav-item">
+						<a href=""></a>
+					</li>
+					<li class="layui-nav-item">
+						<a href=""></a>
+					</li>
+					<li class="layui-nav-item">
+						<a href="javascript:;"></a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href=""></a>
+							</dd>
+							<dd>
+								<a href=""></a>
+							</dd>
+							<dd>
+								<a href=""></a>
+							</dd>
+						</dl>
+					</li>
+				</ul>
+				<ul class="layui-nav layui-layout-right">
+					<li class="layui-nav-item">
+						<a href="javascript:;">
+							<img src="static/img/logo.ico" class="layui-nav-img"> 天睿
+						</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="">基本资料</a>
+							</dd>
+							<dd>
+								<a href="">安全设置</a>
+							</dd>
+						</dl>
+					</li>
+					<li class="layui-nav-item">
+						<a href="">退出</a>
+					</li>
+				</ul>
+			</div>
+	
+			<div class="layui-side layui-bg-black">
+				<div class="layui-side-scroll">
+					<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+					<ul class="layui-nav layui-nav-tree" lay-filter="test">
+						<li class="layui-nav-item layui-nav-itemed">
+							<a class="stich" href="javascript:;">北京天睿空间拼接一dddddd</a>
+							<dl class="layui-nav-child" id="second">
+								<dd  style="list-style-image: url(static/img/logo.ico);">
+									<a href=" ">相机一</a>
+								</dd>
+								<dd>
+									<a href=" ">相机二</a>
+								</dd>
+								<dd>
+									<a href=" ">相机三</a>
+								</dd>
+								<dd>
+									<a href=" ">相机四</a>
+								</dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a class="stich" href="javascript:;">拼接二</a>
+							<dl class="layui-nav-child" id="second">
+								<dd>
+									<a href=" ">相机一</a>
+								</dd>
+								<dd>
+									<a href=" ">相机二</a>
+								</dd>
+								<dd>
+									<a href=" ">相机三</a>
+								</dd>
+								<dd>
+									<a href=" ">相机四</a>
+								</dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a class="stich" href="">
+								<div id="pano-add" ><img src="static/img/add.png" id="add-image">&nbsp&nbsp&nbsp&nbsp&nbsp添加</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="layui-tab layui-tab-brief" id="gputab_outer">
+				<div id="gputab_inner">
+					<ul class="layui-tab-title">
+			    		<li class="layui-this">资源占用</li>
+					</ul>
+					<div class="layui-tab-content">
+				    	<div class="layui-tab-item layui-show">
+				    		<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="gpucontent">
+								<div class="layui-form-item">
+									<label class="layui-form-label">CPU-1</label>
+									<div class="layui-input-block">
+										<input type="text" readonly="readonly" value="50%" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label">CPU-2</label>
+									<div class="layui-input-block">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label">CPU-3</label>
+									<div class="layui-input-block">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label">内存</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label">硬盘</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label">显卡1</label>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">GPU</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">显存</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">编码</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">解码</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label">显卡2</label>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">GPU</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">显存</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">编码</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">解码</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label">显卡3</label>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">GPU</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">显存</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">编码</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label gpu-label">解码</label>
+									<div class="layui-input-block">
+										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+									</div>
+								</div>
+							</form>
+				    	</div>
+					</div>
+				</div>
+		   </div>
+			<div class="layui-body" id="body_main_content">
+				<!-- 内容主体区域 -->
+				<div class="layui-carousel" id="stichparam" lay-filter="test1" >
+					<div  carousel-item id="caritem">
+					    <div id="water_grid" class="water_grid">
+					    	<div class="box">
+					    		<div class="stichitem">
+					    			<div class="layui-card">
+								        <div class="layui-card-header">
+								        	<div id="layui-card-header-name">北京天睿空间拼接一ddddd</div>
+								        </div>
+								        <div class="layui-card-body">
+								        	<button class="layui-btn" id="delete"></button>
+											<button class="layui-btn" id="modify"></button>
+								        	<button class="layui-btn layui-btn-normal layui-btn-radius" id="play" data-method="setTop"></button>
+								        	<button class="layui-btn" id="panostatus"><span class="layui-badge-dot layui-bg-red"></span>&nbsp&nbsp&nbsp崩溃</button>
+								        	<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="panocontent">
+												<div class="layui-form-item">
+													<label class="layui-form-label">编号</label>
+													<div class="layui-input-block" >
+														<input type="text" readonly="readonly" name="title"  lay-verify="required|title" required placeholder="拼接ID" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+												<div class="layui-form-item">
+													<label class="layui-form-label">名称</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" lay-verify="required|title" required placeholder="拼接名称" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+												<div class="layui-form-item"> 
+													<label class="layui-form-label">显卡</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" lay-verify="required|title" required placeholder="显卡类型" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+												<div class="layui-form-item">
+													<label class="layui-form-label">相机1</label>
+													<div class="layui-input-block" >
+														<input type="text" readonly="readonly" name="title" value="rtsp://admin:trkj88888@192.168.5.64:554/Streaming/Channels/101?transportmode=unicast&profile=Profile_1" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+												<div class="layui-form-item">
+													<label class="layui-form-label">相机2</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+												<div class="layui-form-item"> 
+													<label class="layui-form-label">相机3</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+												<div class="layui-form-item">
+													<label class="layui-form-label">相机4</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+												<div class="layui-form-item">
+													<label class="layui-form-label">类型</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+												<div class="layui-form-item">
+													<label class="layui-form-label">输出1</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" lay-verify="required|title" required placeholder="拼接输出流地址" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+												<div class="layui-form-item">
+													<label class="layui-form-label">输出2</label>
+													<div class="layui-input-block">
+														<input type="text" name="title" lay-verify="required|title" required placeholder="拼接输出流地址" autocomplete="off" class="layui-input">
+													</div>
+												</div>
+											</form>
+								        </div>
+								        <span class="layui-nav-bar"></span>
+								     </div>
+					    		</div>	
+					    	</div>
+					    </div>
+						<div id="page"></div>
+					</div>   
+				</div>
+				<div id="camerabox" class="layui-carousel" >
+					<iframe src="http://www.baidu.com"  width="100%" height="100%" ></iframe>
+				</div>
+			</div>
+			
 
-<body class="config  ui-layout-container" id="config">
-    <div class="" style="display: none; position: absolute;">
-        <div class="aui_outer">
-            <table class="aui_border">
-                <tbody>
-                    <tr>
-                        <td class="aui_nw"></td>
-                        <td class="aui_n"></td>
-                        <td class="aui_ne"></td>
-                    </tr>
-                    <tr>
-                        <td class="aui_w"></td>
-                        <td class="aui_c">
-                            <div class="aui_inner">
-                                <table class="aui_dialog">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="2" class="aui_header">
-                                                <div class="aui_titleBar">
-                                                    <div class="aui_title" style="cursor: move;"></div>
-                                                    <a class="aui_close" href="javascript:/*artDialog*/;">×</a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="aui_icon" style="display: none;">
-                                                <div class="aui_iconBg" style="background: none;"></div>
-                                            </td>
-                                            <td class="aui_main" style="width: auto; height: auto;">
-                                                <div class="aui_content" style="padding: 5px;"></div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" class="aui_footer">
-                                                <div class="aui_buttons" style="display: none;"></div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </td>
-                        <td class="aui_e"></td>
-                    </tr>
-                    <tr>
-                        <td class="aui_sw"></td>
-                        <td class="aui_s"></td>
-                        <td class="aui_se" style="cursor: se-resize;"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <iframe src="about:blank" frameborder="0" style="position: absolute; z-index: -1; left: 0px; top: 0px; border: 0px; width: 110px; height: 84px;"></iframe>
-    </div>
-    <div class="layout-north ui-layout-pane ui-layout-pane-north ng-scope" id="header" ng-controller="headerController" style="position: absolute; margin: 0px; top: 0px; bottom: auto; left: 0px; right: 0px; width: auto; z-index: 0; height: 40px; display: block; visibility: visible;">
-        <!-- ngInclude: 'common/header.asp' -->
-        <div class="header ng-scope" ng-include="'common/header.js'" onload="headerLoaded();">
-            <div class="logo ng-scope"></div>
-            <ul style="display:none" id="nav" class="nav ng-scope">
-                <li><a ng-bind="oLan.preview" ng-click="jumpTo('preview')" class="ng-binding">预 览</a></li>
-                <li ng-show="bSupportPlayback" class=""><a ng-bind="oLan.playback" ng-click="jumpTo('playback')" class="ng-binding">回
-						放</a></li>
-                <li ng-show="bSupportPicture" class=""><a ng-bind="oLan.picture" ng-click="jumpTo('download')" class="ng-binding">图
-						片</a></li>
-                <li ng-show="bSupportApplication" class=""><a ng-bind="oLan.application" ng-click="jumpTo('application')" class="ng-binding">应用</a></li>
-                <li class="active"><a ng-bind="oLan.config" ng-click="jumpTo('config')" class="ng-binding">配 置</a></li>
-            </ul>
-            <ul class="nav ng-scope">
-                <li class="CPU">aa</li>
-                <li class="GPU">ad</li>
-                <li class="MemoryAvailable">af</li>
-                <li class="DiskSize">afa</li>
-            </ul>
-            <div class="header-r ng-scope">
-                <div class="user">
-                    <div class="icon"></div>
-                    <label ng-bind="username" class="ng-binding"></label>
-                </div>
-                <div style="display:none" class="help" ng-show="bSupportHelp" ng-click="help()">
-                    <div class="icon"></div>
-                    <label class="pointer ng-binding" ng-bind="oLan.help">帮助</label>
-                </div>
-                <div class="exit" style="" ng-click="exit()">
-                    <div class="icon"></div>
-                    <label class="pointer ng-binding" ng-bind="oLan.logout">注销</label>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="layout-west ui-layout-pane ui-layout-pane-west ng-scope" id="menu" ng-controller="menuController" style="position: absolute; margin: 0px; left: 0px; right: auto; top: 40px; bottom: 0px; height: 96%; z-index: 0; width: 214px; display: block; visibility: visible;">
-        <div class="sdmenu ng-scope" onselectstart="return false;" ng-include="'common/menu.js'" onload="menuLoaded();">
-            <div name="operation" class="ng-scope menu menu-1">
-                <div class="menu-title menu-title-1" style="padding-left: 21px;"><span class="menu-icon operation-icon"></span><span ng-bind="oMenuLan.operation" class="ng-binding">运维</span></div>
-                <div name="TasksManager" class="menu menu-2 collapsed" style="padding: 8px 0px 8px 42px;"><span ng-bind="TasksManager" class="ng-binding">任务管理</span></div>
-                <div name="TaskInfo" class="menu menu-2 collapsed" style="padding: 8px 0px 8px 42px;"><span ng-bind="TaskInfo" class="ng-binding">任务信息</span></div>
-            </div>
-            <div name="system" class="ng-scope menu menu-1 collapsed">
-                <div class="menu-title menu-title-1" style="padding-left: 21px;"><span class="menu-icon system-icon"></span><span ng-bind="oMenuLan.system" class="ng-binding">系统</span></div>
-                <div name="setting" class="menu menu-2" style="padding: 8px 0px 8px 39px;"><span ng-bind="oMenuLan.systemSettings" class="ng-binding">系统设置</span></div>
-            </div>
-        </div>
-    </div>
-    <div class="layout-center ui-layout-pane ui-layout-pane-center ui-layout-container ui-layout-pane-hover ui-layout-pane-center-hover ui-layout-pane-open-hover ui-layout-pane-center-open-hover" style="position: absolute; margin: 0px; left: 214px; right: 0px; top: 40px; bottom: 0px; height: 90%; width: 90%; z-index: 0; display: block; visibility: visible; overflow: hidden;">
-        <div class="layout-center-inner ui-layout-pane ui-layout-pane-center ui-layout-pane-hover ui-layout-pane-center-hover ui-layout-pane-open-hover ui-layout-pane-center-open-hover" style="position: absolute; margin: 0px; left: 0px; right: 0px; top: 0px; bottom: 30px; height: 100%; width: 85%; z-index: 0; display: block; visibility: visible;overflow: hidden;">
-            <div id="view" class="view" style="height:100%;width:100%;position:relative">
-                <div id="tabs" class="tabs-1 ui-tabs ui-widget ui-widget-content ui-corner-all" style="height:100%;width:100%">
-                    <ul id="operation" ng-controller="operationController" class="ng-scope ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
-                        <li id="TasksManager" module="TasksManager" class="ui-state-default ui-corner-top ui-state-hover ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="ui-tabs-45" aria-labelledby="ui-id-45" aria-selected="true"><a href="javascript:void(0)" onclick="GetAllTasks(this)" hidefocus="" ng-bind="oLan.userManagement" class="ng-binding ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-45">任务管理</a></li>
-                        <li id="TaskInfo" module="TaskInfo" ng-if="oTab.bSupportOnlineUser" class="ng-scope ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="ui-tabs-46" aria-labelledby="ui-id-46" aria-selected="false"><a href="javascript:void(0)" onclick="GetTaskInfo(this)" hidefocus="" ng-bind="oLan.onlineUser" class="ng-binding ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-46">任务信息</a></li>
-                    </ul>
-                    <ul id="setting" ng-controller="settingController" class="ng-scope ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
-                        <li module="setting" class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="ui-tabs-1" aria-labelledby="ui-id-1" aria-selected="true"><a href="javascript:void(0)" onclick="GetBaseInfos(this)" hidefocus="" ng-bind="oLan.basicInfo" class="ng-binding ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-1">基本信息</a></li>
-                    </ul>
-                    <div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom" aria-live="polite" aria-labelledby="ui-id-1" role="tabpanel" aria-expanded="true" aria-hidden="false" style="display: none;width:50%">
-                        <div id="setting" ng-controller="settingController" class="ng-scope">
-                            <div class="items">
-                                <div class="item">
-                                    <span class="first ng-binding" ng-bind="oLan.webVersion">Web版本</span>
-                                    <span><input id="webVersion" type="text" class="text-long ng-pristine ng-valid" ng-disabled="true" ng-model="oSettingInfo.webVersion"
-										 disabled="disabled"></span>
-                                </div>
-                                <div class="item" style="">
-                                    <span class="first ng-binding" ng-bind="oLan.MachineCode">机器码</span>
-                                    <span><input id="MachineCode" type="text" class="text-long ng-pristine ng-valid" disabled="disabled"></span>
-                                </div>
-                                <div class="item" style="">
-                                    <span class="first ng-binding" ng-bind="oLan.RegisterCode">注册码</span>
-                                    <span><input id="RegisterCode" type="text" class="text-long ng-pristine ng-valid"></span>
-                                    <span class="third ng-binding"><button onclick="Registe()">注册</button></span>
-                                </div>
-                                <div class="item" style="">
-                                    <span class="first ng-binding" ng-bind="oLan.RegisterStatus">注册状态</span>
-                                    <span><input id="RegisterStatus" type="text" class="text-long ng-pristine ng-valid" disabled="disabled"></span>
-                                </div>
-                                <div class="item" style="">
-                                    <span class="first ng-binding" ng-bind="oLan.Duetime">到期时间</span>
-                                    <span><input id="Duetime" type="text" class="text-long ng-pristine ng-valid" disabled="disabled"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="ui-tabs-45" class="ui-tabs-panel ui-widget-content ui-corner-bottom" aria-live="polite" aria-labelledby="ui-id-45" role="tabpanel" aria-expanded="true" aria-hidden="false" style="display: block;width:100%;height:90%;">
-                        <div id="TasksManager" ng-controller="userManageController" class="ng-scope" style="width:100%;height:100%">
-                            <div class="items" style="width:100%;height:100%">
-                                <div class="item title grid-title700">
-                                    <span class="first ng-binding" ng-bind="oLan.userList">任务管理</span>
-                                    <span class="grid-title-right">
-										<button class="btn ng-binding ellipsis" type="button" ng-disabled="oBtnDisabled.bStart" onclick="TaskStart()"
-										 ng-click="Start()" ng-bind="oLan.Start" title="开始">开始</button>
-										<button class="btn ng-binding ellipsis" type="button" ng-disabled="oBtnDisabled.bStop" onclick="TaskStop()"
-										 ng-click="Stop()" ng-bind="oLan.Stop" title="停止">停止</button>
-										<button class="btn ng-binding ellipsis" type="button" ng-disabled="oBtnDisabled.bRemove" onclick="TaskRemove()"
-										 ng-click="Remove()" ng-bind="oLan.Remove" title="移除">移除</button>
-										<button class="btn ng-binding ellipsis" type="button" ng-disabled="oBtnDisabled.bEdit" onclick="TaskEdit(this)"
-										 ng-click="Edit()" ng-bind="oLan.Edit" title="编辑">编辑</button>
-										<button class="btn ng-binding ellipsis" type="button" ng-disabled="oBtnDisabled.bRefresh" onclick="TaskRefresh()"
-										 ng-click="refresh()" ng-bind="oLan.refresh" title="刷新">刷新</button>
-									</span>
-                                </div>
-                                <div id="TasksManagerDiv" style="height:90%;width:100%;position:relative;left:15px;overflow:auto;margin-top:4%">
+			<div class="layui-footer">
+				<!-- 底部固定区域 -->
+				© www.iseetech.com.cn - 北京天睿空间科技股份有限公司
+			</div>
+		</div>
+	</body>
+	<script>
+		//JavaScript代码区域
+		layui.use('jquery', function(){
+		  var $ = layui.jquery;
+		  var submit = function(){
+		    return false;
+		  };
+		  $('#test').on('submit', function(){
+		     return false
+		  });
+		  $('#test').on('submit', function(){
+		     return true
+		  });
+		});
+		
+		layui.use('element', function() {
+			var element = layui.element;
 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="ui-tabs-46" class="ui-tabs-panel ui-widget-content ui-corner-bottom" aria-live="polite" aria-labelledby="ui-id-46" role="tabpanel" aria-expanded="false" aria-hidden="true" style="display: none;width:100%;height:90%;">
-                        <div id="TaskInfo" ng-controller="userOnlineTaskInfo" class="ng-scope" style="width:100%;height:100%">
-                            <div class="items" style="width:100%;height:100%">
-                                <div class="item title grid-title700">
-                                    <span class="first ng-binding" ng-bind="oLan.userList">任务信息</span>
-                                    <span class="grid-title-right">
-										<button class="btn ng-binding ellipsis" type="button" ng-disabled="oBtnDisabled.bStart" onclick="" ng-click="Start()"
-										 ng-bind="oLan.Start" title="开始" style="display:none">开始</button>
-										<button class="btn ng-binding ellipsis" type="button" ng-disabled="oBtnDisabled.bStop" onclick="" ng-click="Stop()"
-										 ng-bind="oLan.Stop" title="停止" style="display:none">停止</button>
-										<button class="btn ng-binding ellipsis" type="button" ng-disabled="oBtnDisabled.bSave" onclick="TaskInfoSave()"
-										 ng-click="Save()" ng-bind="oLan.Save" title="保存" style="display:none">保存</button>
-										<button class="btn ng-binding ellipsis" type="button" ng-disabled="oBtnDisabled.bRefresh" onclick="TaskInfoRefresh()"
-										 ng-click="refresh()" ng-bind="oLan.refresh" title="刷新" style="display:none">刷新</button>
-									</span>
-                                </div>
-                                <div id="TaskInfoDiv" style="height:100%;width:100%;position:relative;left:15px;overflow:auto;margin-top:2%;overflow-x:hidden;">
-                                    <div id="setting" ng-controller="settingController" class="ng-scope">
-                                        <div class="items">
-                                            <div class="item" style="display:none">
-                                                <span class="first ng-binding">Web版本</span>
-                                                <span><input id="webVersion" type="text" class="text-long ng-pristine ng-valid"></input></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="SystemInfoDiv" class="layout-center-inner ui-layout-pane ui-layout-pane-center ui-layout-pane-hover ui-layout-pane-center-hover ui-layout-pane-open-hover ui-layout-pane-center-open-hover" style="display:block;visibility:visible;overflow:hidden;height:100%;width:15%;margin-left:85%; bottom: 30px;">
-            <ul id="SystemInfo" style="position:relative;height:100%;width:100%;margin-top:20%">
-                <li>
-                    <span>系统版本:</span>
-                    <span id="OS_Version"></span>
-                </li>
-                <li>
-                    <span>硬盘大小:</span>
-                    <span id="DiskSize"></span>
-                </li>
-                <li>
-                    <span>系统内存:</span>
-                    <span id="PhisicalMemory"></span>
-                </li>
-                <li>
-                    <span>可用内存:</span>
-                    <span id="MemoryAvailable"></span>
-                </li>
-                <li>
-                    <span>CPU占用率:</span>
-                    <span id="CPULoad"></span>
-                </li>
-            </ul>
+		});
+		
+		layui.use('carousel', function(){
+		  var carousel = layui.carousel;
+		  
+		  var iHeight =$("#body_main_content")[0].offsetHeight;
+		  var iWidth = $("#body_main_content")[0].offsetWidth;
+		  console.log(iHeight,iWidth);
+		  //建造实例
+		  var instich = carousel.render({
+		    elem: '#stichparam'
+		    ,index: 1
+			,width: iWidth+'px'
+			,height: iHeight+'px'
+//			    ,full: true 
+		    ,arrow: 'hover'
+		    ,autoplay: false
+		    //,indicator: 'outside'
+		    ,trigger: 'hover'
+		  });
+		  
+		  //事件
+		  carousel.on('change(test1)', function(res){
+		    console.log(res);
+		  });
 
-
-        </div>
-    </div>
-    <div id="usersAttrDiv" class="usersAttrDiv">
-        <div id="mou_head" class="mou_head">
-            <span class="mou_head_Title">用户信息</span>
-            <img title="关闭" src="static/script/ui/images/close_16.png" class="mou_head_Close" />
-        </div>
-        <div class="userSelect">
-            <table id="userSelectTable"></table>
-        </div>
-        <div class="functionDiv">
-            <input class="sure" type="button" value="确定" />
-            <input class="cancle" type="button" value="取消" />
-        </div>
-        <div>
-</body>
-
+		});
+		
+		layui.use('layer', function(){
+			//独立版的layer无需执行这一句
+			var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+			  
+			  //触发事件
+			var active = {
+			    setTop: function(){
+			    	var that = this; 
+			        //多窗口模式，层叠置顶
+			        layer.open({
+				        type: 2 //此处以iframe举例
+				        ,title: '当你选择该窗体时，即会在最顶端'
+				        ,area: ['390px', '260px']
+				        ,shade: 0
+				        ,maxmin: true
+				        ,offset: [ //为了演示，随机坐标
+				          Math.random()*($(window).height()-300)
+				          ,Math.random()*($(window).width()-390)
+				        ] 
+				        ,content: '//layer.layui.com/test/settop.html'
+				        ,btn: ['继续弹出', '全部关闭'] //只是为了演示
+				        ,yes: function(){
+				            $(that).click(); 
+				        	}
+				        ,btn2: function(){
+				            layer.closeAll();
+				        	}
+				        
+				        ,zIndex: layer.zIndex //重点1
+				        ,success: function(layero){
+				            layer.setTop(layero); //重点2
+				        	}
+			        	});
+			    	}
+			  	};
+			  
+			  	$('.layui-card-header .layui-btn').on('click', function(){
+			    	var othis = $(this), method = othis.data('method');
+			    	active[method] ? active[method].call(this, othis) : '';
+//			    	$(".layui-input-block input").removeAttr("readonly");
+			  	});
+			  
+			  	var rgb = $(".layui-badge-dot").css("background-color");
+			  	$(".stichitem .layui-nav-bar").css("background-color",rgb);
+  
+			});
+//		$(document).ready(function(){
+//			creatpano({text:'沁园春-雪'});
+//			creatpano({text:'沁园春-长沙'});
+//			creatpano({text:'沁园春-望西楼'});
+//			creatpano({text:'沁园春-日出'});
+//			
+//			window.setTimeout(function(){itemWaterfull()},100);
+//		});
+//	
+//		$(document).ready(function(){
+//		
+//			$(".layui-nav-item").on("click", "a", function(event){
+//				console.log("点击事件处理");
+//				console.log($(this).text());
+//				console.log($(this).parents());
+//		
+//				$('#page1').load('form.html');
+//		    	$.getScript("js/stitch_form.js", function(){
+////		     		addData(layui);
+//		     	});
+//			});
+//		
+//		});
+	</script>
 </html>

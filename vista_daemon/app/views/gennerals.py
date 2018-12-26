@@ -13,7 +13,7 @@ genneral_view = Blueprint('gennerals', __name__)
 @genneral_view.route('/login', methods=['GET', 'POST'])
 @genneral_view.route('/login.html', methods=['GET', 'POST'])
 def grl_login():
-    a = render_template('login.html')
+    a = render_template('main.html')
     return a
 
 
