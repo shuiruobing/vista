@@ -13,7 +13,7 @@ genneral_view = Blueprint('gennerals', __name__)
 @genneral_view.route('/login', methods=['GET', 'POST'])
 @genneral_view.route('/login.html', methods=['GET', 'POST'])
 def grl_login():
-    a = render_template('main.html')
+    a = render_template('login.html')
     return a
 
 
@@ -26,3 +26,9 @@ def grl_main():
     # if(token is not None):
     return render_template('main.html')
     # return redirect(url_for('gennerals.grl_login'))
+
+
+@genneral_view.route('/form.html', methods=['GET', 'POST'])
+@flask_login.login_required
+def grl_form():
+    return render_template('form.html')
