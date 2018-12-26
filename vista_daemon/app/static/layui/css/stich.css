@@ -311,5 +311,15 @@ form{
 {
 	height: 100%;
 }
-
+.layui-collapse #input_content1{
+	float: left;
+	width: 30%; 
+	margin-top: 10px;
+	
+}
+.layui-collapse #input_content2{
+	float: left;
+	width: 70%;
+	margin-top: 10px;
+}
 
