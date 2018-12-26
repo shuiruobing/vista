@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="expires" content="FRI,1 JUN 2013 00 00 00 GMT">
+    <link rel="stylesheet" href="static/script/config/bootstrap/bootstrap.min.css" />
+
+    <title>用户登陆</title>
+    <style>
+        body {
+            background: url(static/script/ui/images/subway_background.png) no-repeat left top fixed;
+            background-size: 100% 100%;
+        }
+        
+        .title {
+            width: 100%;
+            z-index: 1000;
+            position: absolute;
+            color: black;
+            font-size: 25px;
+            font-weight: 800;
+            text-align: center;
+            top: 5%;
+            margin-left: 0px;
+            margin-top: 0px;
+            color: white;
+        }
+        
+        .mycenter {
+            margin-top: 150px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            width: 600px;
+            padding: 5%;
+            padding-left: 5%;
+        }
+        
+        .mycenter mysign {
+            width: 440px;
+        }
+        
+        .mycenter input,
+        button,
+        p {
+            margin-top: 5%;
+            margin-left: 10%;
+            margin-right: 10%;
+            color: white;
+        }
+        
+        .mycenter input {
+            background: transparent;
+            border-width: 0px 0px 1px 0px;
+            border-style: none;
+            border-bottom-style: solid;
+            border-bottom-color: white;
+            border-radius: 0;
+            box-shadow: none;
+            color: white;
+        }
+        
+        .mycenter input:active {
+            background: transparent;
+            border-width: 0px 0px 1px 0px;
+            border-style: none;
+            border-bottom-style: solid;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        
+        .mycenter input:focus {
+            background: transparent;
+            border-width: 0px 0px 1px 0px;
+            border-style: none;
+            border-bottom-style: solid;
+            border-bottom-color: white;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        
+        .mycenter button {
+            border-width: 1px;
+            border-radius: 0;
+            margin-top: 30px;
+            background-color: #0000ff;
+            color: #FFFFFF !important;
+        }
+        
+        .mycenter button:hover {
+            background-color: #101010;
+            border-color: #0094FF;
+            color: #FFFFFF !important;
+        }
+        
+        .mycenter button:active {
+            border-radius: 0;
+            background-color: #262626;
+            color: #FFFFFF !important;
+        }
+        
+        .mycenter p {
+            color: red;
+        }
+        
+        .loader {
+            width: 300px;
+            margin: 190px auto 70px;
+            position: relative;
+        }
+        
+        .loader .loading-1 {
+            position: relative;
+            width: 100%;
+            height: 5px;
+            border: 1px solid white;
+        }
+        
+        .loader .loading-1:before {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 0%;
+            height: 100%;
+            background: #69d2e7;
+            animation: load 5s linear infinite;
+        }
+        
+        .loader .loading-2 {
+            width: 100%;
+            position: absolute;
+            top: 10px;
+            color: #69d2e7;
+            font-size: 22px;
+            text-align: center;
+            animation: bounce 2s linear infinite;
+        }
+        
+        @keyframes load {
+            0% {
+                width: 0%;
+            }
+            87.5%,
+            100% {
+                width: 100%;
+            }
+        }
+        
+        @keyframes bounce {
+            0%,
+            100% {
+                top: 10px;
+            }
+            12.5% {
+                top: 30px;
+            }
+        }
+    </style>
+    <script src="static/script/config/jquery/jquery.min.js"></script>
+    <script src="static/script/config/bootstrap/bootstrap.min.js"></script>
+    <script src="static/script/config/bootstrap/bootstrap.min.js"></script>
+    <script src="static/script/config/md5/md5.js"></script>
+    <!--字符串格式化和日期格式化函数-->
+    <script src="static/script/config/exfunc.js"></script>
+    <script src="static/script/config/config/config.js"></script>
+    <script>
+        var username = "";
+        $(document).ready(function() {
+            $("#user").val(username);
+        });
+
+        function log(obj) {
+            username = $("#user")[0].value;
+            var password = hex_md5($("#pass")[0].value);
+            var data = {
+                username: username,
+                password: password
+            };
+            var url = window.location.protocol + "//" + window.location.host + "/api/v1/user/Login";
+            if (username != "" && password != "") {
+                $("#loading").show();
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    cache: false,
+                    ContentType: "application/x-www-form-urlencoded",
+                    data: data,
+                    success: function(data, response) {
+                        setCookie('UserName', username);
+                        setCookie('Password', password);
+                        setCookie('Token', data.Access.Token);
+                        $("#loading").hide();
+                        window.location.href = "main?Token=" + data.Access.Token;
+                    },
+                    error: function(err) {
+                        if (err.statusText != null) {
+                            alert("登录失败");
+                        } else {
+                            $("#errotip").text("登录失败").show();
+                        }
+                        $("#loading").hide();
+                    },
+                    complete: function(xhr, data) {
+
+                    }
+                });
+            }
+        }
+
+        function inputText() {
+            $("#errotip").hide();
+        }
+    </script>
+</head>
+
+<body onkeydown='if(event.keyCode==13){cu.click()}'>
+    <p class="title" style="color:black;font-size:30px">Vista系统 </p>
+    <div class="mycenter">
+        <div class="col-lg-10">
+            <input type="text" id="user" onpropertychange="inputText()" oninput="inputText()" autofocus="autofocus" class="form-control" name="username" placeholder="用户名" required autofocus />
+        </div>
+        <div class="col-lg-10"></div>
+        <div class="col-lg-10">
+            <input type="password" id="pass" onpropertychange="inputText()" oninput="inputText()" class="form-control" name="password" placeholder="密码" required autofocus />
+        </div>
+        <div class="col-lg-10">
+            <p id="errotip" style="display: none;">错误</p>
+        </div>
+
+        <div class="col-lg-10">
+            <button id="cu" type="button" class="btn col-lg-12" onclick="log(this)">登&nbsp;&nbsp;录</button>
+        </div>
+        <div class="loader" id="loading" style="display: none;">
+            <div class="loading-1"></div>
+            <div class="loading-2">Loading...</div>
+        </div>
+    </div>
+</body>
+
+</html>
