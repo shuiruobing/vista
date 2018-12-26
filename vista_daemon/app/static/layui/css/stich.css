@@ -322,4 +322,21 @@ form{
 	width: 70%;
 	margin-top: 10px;
 }
+.layui-collapse .layui-input{
+	background-color: #E1E1E1;
+	height: 26px;
+	font-size: 10px;
 
+}
+
+.layui-collapse .layui-input-id{
+	width: 100px;
+
+}
+.layui-collapse .layui-input-url{
+	width: 400px;
+
+}
+.layui-form-item .layui-input-inline {
+    width: 90px;
+}
