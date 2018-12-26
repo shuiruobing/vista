@@ -238,6 +238,8 @@ public:
             pFmt_->oformat->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
         pFmt_->start_time_realtime = AV_NOPTS_VALUE;
 
+        ctxRational_ = avctx->time_base;
+
         this->startThread();
         return true;
     }
@@ -278,6 +280,8 @@ protected:
                     {
                         pkt->pts = AV_NOPTS_VALUE;
                     }
+//                    if(ctxRational_.den !=0 && ctxRational_.num != 0)
+//                        av_packet_rescale_ts(pkt.get(),ctxRational_,pFmt_->streams[0]->time_base);
                     auto ret = av_interleaved_write_frame(pFmt_, pkt.get());
                     if(ret < 0)
                     {
@@ -297,6 +301,7 @@ protected:
 
         if(pFmt_->pb)
         {
+            av_write_trailer(pFmt_);
             avio_closep(&pFmt_->pb);
         }
 
@@ -307,6 +312,7 @@ protected:
 private:
     AVFormatContext* pFmt_{nullptr};
     std::string muxer_;
+    AVRational ctxRational_;
 };
 
 /****************************************************************
