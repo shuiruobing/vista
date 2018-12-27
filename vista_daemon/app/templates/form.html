@@ -13,7 +13,7 @@
 	<body>-->
 		<div class="layui-collapse" lay-accordion="" style="overflow: auto;">
   			<div class="layui-colla-item">
-				<h2 class="layui-colla-title">任务信息</h2>
+				<h1 class="layui-colla-title">任务信息</h1>
 				<div class="layui-colla-content layui-show">
 					<div class="layui-collapse" lay-accordion="">
 						<div class="layui-colla-item">
@@ -38,13 +38,14 @@
 							<div class="layui-colla-content layui-show">
 								<div class="layui-collapse" lay-accordion="">
 									<div class="layui-colla-item" >
-										<h2 class="layui-colla-title">拼接</h2>
+										<h2 class="layui-colla-title">拼接配置</h2>
 										<div class="layui-colla-content layui-show">
 											拼接参数
 										</div>
 									</div>
 									<div class="layui-colla-item">
-										<h2 class="layui-colla-title">输入</h2>
+										<button class="layui-btn" id="add-camera"></button>
+										<h2 class="layui-colla-title">输入配置</h2>
 										<div class="layui-colla-content layui-show" >
 											<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="input_content1">
 												<div class="layui-form-item">
@@ -165,9 +166,9 @@
 										</div>
 									</div>
 									<div class="layui-colla-item">
-										<h2 class="layui-colla-title">输出</h2>
+										<h2 class="layui-colla-title">编码配置</h2>
 										<div class="layui-colla-content layui-show">
-											<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="content">
+											<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="encode-content1">
 												<div class="layui-form-item">
 													<label class="layui-form-label">编码类型</label>
 													<div class="layui-input-inline">
@@ -197,6 +198,17 @@
 													</div>
 												</div>
 												<div class="layui-form-item">
+													<label class="layui-form-label">硬件加速</label>
+													<div class="layui-input-inline">
+														<select name="interest-search" lay-filter="interest-search" lay-search>
+															<option value="NVIDA-01">true</option>
+															<option value="NVIDA-02">false</option>
+														</select>
+													</div>
+												</div>
+										    </form>
+										    <form class="layui-form layui-form-pane1" action="" lay-filter="first" id="encode-content2"> 
+												<div class="layui-form-item">
 													<label class="layui-form-label">编码模式</label>
 													<div class="layui-input-inline">
 														<select name="interest-search" lay-filter="interest-search" lay-search>
@@ -206,47 +218,104 @@
 														</select>
 													</div>
 												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">组播地址</label>
-													<div class="layui-input-inline">
-														<select name="interest-search" lay-filter="interest-search" lay-search>
-															<option value="baseline">baseline</option>
-															<option value="mainline">mainline</option>
-															<option value="highline">highline</option>
-														</select>
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">RTSP地址</label>
-													<div class="layui-input-inline">
-														<select name="interest-search" lay-filter="interest-search" lay-search>
-															<option value="baseline">baseline</option>
-															<option value="mainline">mainline</option>
-															<option value="highline">highline</option>
-														</select>
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">国标</label>
-													<div class="layui-input-inline">
-														<select name="interest-search" lay-filter="interest-search" lay-search>
-															<option value="baseline">baseline</option>
-															<option value="mainline">mainline</option>
-															<option value="highline">highline</option>
-														</select>
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">ONVIF</label>
-													<div class="layui-input-inline">
-														<select name="interest-search" lay-filter="interest-search" lay-search>
-															<option value="baseline">baseline</option>
-															<option value="mainline">mainline</option>
-															<option value="highline">highline</option>
-														</select>
-													</div>
-												</div>
 											</form>
+											<div style="clear:both;"></div>
+										</div>
+									</div>
+									<div class="layui-colla-item">
+										<h2 class="layui-colla-title">输出配置</h2>
+										<form class="layui-form layui-form-pane1" action="" lay-filter="first" style="position: relative; float:left; left: 120px; top: -45px;width:0px;height: 25px;"> 
+											<div class="layui-form-item">
+												<!--<label class="layui-form-label">类型</label>-->
+												<div class="layui-input-inline">
+													<select name="interest-search" lay-filter="interest-search" lay-search>
+														<option value="">请选择输出类型</option>
+														<option value="组播">组播</option>
+														<option value="国标">国标</option>
+														<option value="RTSP">RTSP</option>
+														<option value="ONVIF">ONVIF</option>
+													</select>
+												</div>
+											</div>
+										</form>
+										<div class="layui-colla-content layui-show">
+											<div class="layui-tab">
+												<ul class="layui-tab-title">
+												    <li class="layui-this">国标(gb28181)</li>
+											    </ul>
+												<div class="layui-tab-content">
+											    	<div class="layui-tab-item layui-show">
+											    		<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="input_content1">
+															<div class="layui-form-item">
+																<label class="layui-form-label">ServerRealm</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="SIP服务器域" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">ServerIp</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="SIP服务器地址" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">ServerPort</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="SIP服务器端口" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">LocalID</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="SIP用户认证ID" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">LocalRealm</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="SIP用户域" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">LocalPort</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="本地SIP端口" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">UserName</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="SIP用户名" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">PassWord</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="SIP用户认证密码" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">Expires</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="注册有效期(秒)" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">Interval</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="心跳周期(秒)" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+															<div class="layui-form-item">
+																<label class="layui-form-label">MaxCount</label>
+																<div class="layui-input-block">
+																	<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="最大心跳超时次数" autocomplete="off" class="layui-input">
+																</div>			
+															</div>
+														</form>
+												    </div>
+											    </div>
+											</div>
 										</div>
 									</div>
 								</div>

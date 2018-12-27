@@ -334,9 +334,36 @@ form{
 
 }
 .layui-collapse .layui-input-url{
-	width: 400px;
+	width: 600px;
 
 }
 .layui-form-item .layui-input-inline {
     width: 90px;
+}
+#add-camera{
+	position: relative;
+	float:right;
+	display: inline;
+	margin-top: 5px;
+	margin-left: 15px;
+	width: 50px;
+	height: 50px;
+	border: none;
+	background-image: url(../../img/add2.png);
+	background-repeat: no-repeat;
+	background-color: transparent;
+}
+.layui-collapse #encode-content1{
+	float: left;
+	width: 30%; 
+	margin-top: 10px;
+	
+}
+.layui-collapse #encode-content2{
+	float: left;
+	width: 70%;
+	margin-top: 10px;
+}
+.layui-form-select{
+	width: 220px;
 }
