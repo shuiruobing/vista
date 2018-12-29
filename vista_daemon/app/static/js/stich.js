@@ -86,7 +86,7 @@ function itemWaterfull(){
 
 function OnAddTask(){
 	$('#page').load('form.html');
-	$.getScript("js/stitch_form.js", function(){});
+	$.getScript("static/js/stitch_form.js", function(){});
 }
 function OnAddCamera()
 {
@@ -174,7 +174,7 @@ $(document).ready(function(){
 	}
 	
 	$('#page').load('form.html');
-	$.getScript("js/stitch_form.js", function(){});
+	$.getScript("static/js/stitch_form.js", function(){});
 	
 	var rgb = $(".layui-badge-dot").css("background-color");
 	$(".stichitem .layui-nav-bar").css("background-color",rgb);
