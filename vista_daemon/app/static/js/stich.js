@@ -83,46 +83,112 @@ function itemWaterfull(){
     putItem();
 }
 	
-window.onresize = function() {
-	itemWaterfull();
-}; //在窗口大小改变后，item重新放置
 
+function OnAddTask(){
+	$('#page').load('form.html');
+	$.getScript("js/stitch_form.js", function(){});
+}
+function OnAddCamera()
+{
+	console.log("come here");
+	var div = '<div class="layui-form-item" >'+'<div class="layui-inline">'+'<label class="layui-form-label">输入1</label>'+'<div class="layui-input-inline">'+'<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="相机ID" autocomplete="off" class="layui-input layui-input-id"/>'+'</div>'+'</div>'+'<div class="layui-inline"">'+'<div class="layui-input-inline">'+'<input type="text" name="title" lay-verify="required|number" lay-verType="tips" placeholder="相机RTSP地址" autocomplete="off" class="layui-input layui-input-url"/>'+'</div>'+'</div>'+'</div>';
+    $('#input_content2').append(div);
+}
+
+function reanderLayui()
+{
+	var $panoa = $('#pano-add').parent();
+	
+	//JavaScript代码区域
+	layui.use('jquery', function(){
+		var $ = layui.jquery;
+  		var submit = function(){return false;};
+		$('#test').on('submit', function(){return false;});
+  		$('#test').on('submit', function(){return true;});
+	});
+
+	layui.use('element', function() {
+		var element = layui.element;
+	});
+
+	layui.use('carousel', function(){
+  		carousel = layui.carousel;
+  		carousel.set({
+  			elem: '#stichparam'
+  			,width: $('#body_main_content')[0].offsetWidth+'px'
+			,height: $('#body_main_content')[0].offsetHeight+'px'
+			,arrow: 'hover'
+    		,autoplay: false
+    		,trigger: 'hover'
+  		});
+  		carousel.render({elem: '#stichparam',index:0});  
+		$panoa.on("click","div",function(event){carousel.render({elem: '#stichparam',index:1});});
+		$('.stichitem #modify').on("click",function(event){carousel.render({elem: '#stichparam',index:1});});
+	});
+
+	layui.use('layer', function(){
+		//独立版的layer无需执行这一句
+		var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+	  //触发事件
+		var active = {
+	    	setTop: function(){
+	    		var that = this; 
+	        	//多窗口模式，层叠置顶
+	        	layer.open({
+		        	type: 2 //此处以iframe举例
+		        	,title: '当你选择该窗体时，即会在最顶端'
+		        	,area: ['390px', '260px']
+		        	,shade: 0
+		        	,maxmin: true
+		        	,offset: [ //为了演示，随机坐标
+		          		Math.random()*($(window).height()-300)
+		          		,Math.random()*($(window).width()-390)
+		        	] 
+		        	,content: '//layer.layui.com/test/settop.html'
+		        	,btn: ['继续弹出', '全部关闭'] //只是为了演示
+		        	,yes: function(){$(that).click();}
+		        	,btn2: function(){layer.closeAll();}
+		        	,zIndex: layer.zIndex //重点1
+		        	,success: function(layero){	layer.setTop(layero);} //重点2    
+		        	});
+	    	}
+	    };
+	  	$('.layui-card-body .layui-btn').on('click', function(){
+    		var othis = $(this), method = othis.data('method');
+    		active[method] ? active[method].call(this, othis) : '';
+			});
+	});
+	
+}
 
 $(document).ready(function(){
 	
-//	creatpano({text:'沁园春-长沙'});
-//	creatpano({text:'沁园春-望西楼'});
-	
+	reanderLayui();
 	window.setTimeout(function(){itemWaterfull()},100);
-	
-	//内容赋值title
-	$('#layui-card-header-name').hover(function () {
-	    var value = $(this).text();
-	    $(this).attr('title',value);
-	});
+	window.onresize = function(e){
+		layui.carousel.render({
+			elem: '#stichparam'
+			,width: $('#body_main_content')[0].offsetWidth+'px'
+			,height: $('#body_main_content')[0].offsetHeight+'px'})
+		itemWaterfull();
+	}
 	
 	$('#page').load('form.html');
-	$.getScript("static/js/stitch_form.js", function(){});
-
-
+	$.getScript("js/stitch_form.js", function(){});
 	
-//	$(".layui-nav-item").on("click", "a", function(event){
-//	console.log("点击事件处理");
-//	if ($(this).hasClass("stich")) 
-//		{ 
-//			console.log($(this).attr('class'));
-//			$('#page').load('form.html');
-//		    $.getScript("js/stitch_form.js", function(){
-////		     		addData(layui);
-//		     	});
-//        }
-//		else
-//		{
-//			console.log($(this).attr('class'));
-//		}
-//
-//	});
+	var rgb = $(".layui-badge-dot").css("background-color");
+	$(".stichitem .layui-nav-bar").css("background-color",rgb);
+	  	
+	$('#layui-card-header-name').hover(function () {
+		var value = $(this).text();
+		$(this).attr('title',value);
+	});
+	$('.stichitem #delete').click(function(){
 		
+	})
+	$('.stichitem #play').click(function(){
+		
+	})
 		
 });
 

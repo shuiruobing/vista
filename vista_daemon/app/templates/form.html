@@ -18,10 +18,10 @@
 					<div class="layui-collapse" lay-accordion="">
 						<div class="layui-colla-item">
 							<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="content">
-								<div class="layui-form-item">
+								<div class="layui-form-item" style=" margin-top: 5px;">
 									<label class="layui-form-label">通道名称</label>
 									<div class="layui-input-block">
-										<input type="tel" name="phone" lay-verify="required|number" lay-verType="tips" autocomplete="off" class="layui-input">
+										<input type="text" name="title" lay-verify="required|number" lay-verType="tips" autocomplete="off" class="layui-input">
 									</div>			
 								</div>
 								<div class="layui-form-item">
@@ -182,7 +182,7 @@
 													<label class="layui-form-label">编码GOP</label>
 													<div class="layui-input-inline">
 														<select name="interest-search" lay-filter="interest-search" lay-search>
-															<option value="-1">-1</option>
+															<option value="-1">自动</option>
 															<option value="0">0</option>
 														</select>
 													</div>
@@ -224,9 +224,8 @@
 									</div>
 									<div class="layui-colla-item">
 										<h2 class="layui-colla-title">输出配置</h2>
-										<form class="layui-form layui-form-pane1" action="" lay-filter="first" style="position: relative; float:left; left: 120px; top: -45px;width:0px;height: 25px;"> 
+										<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="output-config"> 
 											<div class="layui-form-item">
-												<!--<label class="layui-form-label">类型</label>-->
 												<div class="layui-input-inline">
 													<select name="interest-search" lay-filter="interest-search" lay-search>
 														<option value="">请选择输出类型</option>
@@ -240,12 +239,9 @@
 										</form>
 										<div class="layui-colla-content layui-show">
 											<div class="layui-tab">
-												<ul class="layui-tab-title">
-												    <li class="layui-this">国标(gb28181)</li>
-											    </ul>
 												<div class="layui-tab-content">
 											    	<div class="layui-tab-item layui-show">
-											    		<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="input_content1">
+											    		<form class="layui-form layui-form-pane1" action="" lay-filter="first" id="output_content">
 															<div class="layui-form-item">
 																<label class="layui-form-label">ServerRealm</label>
 																<div class="layui-input-block">

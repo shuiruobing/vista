@@ -4,12 +4,12 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<title>拼接服务配置</title>
-		<link rel="stylesheet" href="static/layui/css/layui.css" type="text/css"/> 
-		<link rel="stylesheet" href="static/layui/css/stich.css" type="text/css"/>
-		<script src="static/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="static/layui/layui.js" type="text/javascript" charset="utf-8"></script>
-		<script src="static/js/stich.js" type="text/javascript" charset="utf-8"></script>
-		<script src="static/js/stitch_form.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" href="layui/css/layui.css" type="text/css"/> 
+		<link rel="stylesheet" href="layui/css/stich.css" type="text/css"/>
+		<script src="js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/stich.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/stitch_form.js" type="text/javascript" charset="utf-8"></script>
 		
 		<style>
 
@@ -26,7 +26,7 @@
 	<body class="layui-layout-body">
 		<div class="layui-layout layui-layout-admin">
 			<div class="layui-header">
-				<div class="layui-logo"><img src="static/img/vista_daemon.png" class="layui-nav-img">Leopard</div>
+				<div class="layui-logo"><img src="img/vista_daemon.png" class="layui-nav-img">Leopard</div>
 				<!-- 头部区域（可配合layui已有的水平导航） -->
 				<ul class="layui-nav layui-layout-left">
 					<li class="layui-nav-item">
@@ -56,7 +56,7 @@
 				<ul class="layui-nav layui-layout-right">
 					<li class="layui-nav-item">
 						<a href="javascript:;">
-							<img src="static/img/logo.ico" class="layui-nav-img"> 天睿
+							<img src="img/logo.ico" class="layui-nav-img"> 天睿
 						</a>
 						<dl class="layui-nav-child">
 							<dd>
@@ -80,7 +80,7 @@
 						<li class="layui-nav-item layui-nav-itemed">
 							<a class="stich" href="javascript:;">北京天睿空间拼接一dddddd</a>
 							<dl class="layui-nav-child" id="second">
-								<dd  style="list-style-image: url(static/img/logo.ico);">
+								<dd  style="list-style-image: url(img/logo.ico);">
 									<a href=" ">相机一</a>
 								</dd>
 								<dd>
@@ -112,8 +112,8 @@
 							</dl>
 						</li>
 						<li class="layui-nav-item">
-							<a class="stich" href="">
-								<div id="pano-add" ><img src="static/img/add.png" id="add-image">&nbsp&nbsp&nbsp&nbsp&nbsp添加</div>
+							<a class="stich" href="#" style="background-color: #262626 !important;">
+								<div id="pano-add"><img id="add-image">&nbsp&nbsp&nbsp&nbsp&nbsp添加</div>
 							</a>
 						</li>
 					</ul>
@@ -148,13 +148,13 @@
 								<div class="layui-form-item">
 									<label class="layui-form-label">内存</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label">硬盘</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
@@ -163,25 +163,25 @@
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">GPU</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">显存</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">编码</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">解码</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
@@ -190,25 +190,25 @@
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">GPU</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">显存</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">编码</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">解码</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
@@ -217,25 +217,25 @@
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">GPU</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">显存</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">编码</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
 									<label class="layui-form-label gpu-label">解码</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
+										<input type="text" readonly="readonly" name="title" lay-verify="required|title"  autocomplete="off" class="layui-input gpu-input">
 									</div>
 								</div>
 							</form>
@@ -269,13 +269,13 @@
 												<div class="layui-form-item">
 													<label class="layui-form-label">名称</label>
 													<div class="layui-input-block">
-														<input type="text" name="title" lay-verify="required|title" required placeholder="拼接名称" autocomplete="off" class="layui-input">
+														<input type="text" readonly="readonly"  name="title" lay-verify="required|title" required placeholder="拼接名称" autocomplete="off" class="layui-input">
 													</div>
 												</div>
 												<div class="layui-form-item"> 
 													<label class="layui-form-label">显卡</label>
 													<div class="layui-input-block">
-														<input type="text" name="title" lay-verify="required|title" required placeholder="显卡类型" autocomplete="off" class="layui-input">
+														<input type="text" readonly="readonly"  name="title" lay-verify="required|title" required placeholder="显卡类型" autocomplete="off" class="layui-input">
 													</div>
 												</div>
 												<div class="layui-form-item">
@@ -287,52 +287,55 @@
 												<div class="layui-form-item">
 													<label class="layui-form-label">相机2</label>
 													<div class="layui-input-block">
-														<input type="text" name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
+														<input type="text" readonly="readonly"  name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
 													</div>
 												</div>
 												<div class="layui-form-item"> 
 													<label class="layui-form-label">相机3</label>
 													<div class="layui-input-block">
-														<input type="text" name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
+														<input type="text" readonly="readonly"  name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
 													</div>
 												</div>
 												<div class="layui-form-item">
 													<label class="layui-form-label">相机4</label>
 													<div class="layui-input-block">
-														<input type="text" name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
+														<input type="text" readonly="readonly"  name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
 													</div>
 												</div>
 												<div class="layui-form-item">
 													<label class="layui-form-label">类型</label>
 													<div class="layui-input-block">
-														<input type="text" name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
+														<input type="text" readonly="readonly"  name="title" lay-verify="required|title" required placeholder="相机rtsp地址" autocomplete="off" class="layui-input">
 													</div>
 												</div>
 												<div class="layui-form-item">
 													<label class="layui-form-label">输出1</label>
 													<div class="layui-input-block">
-														<input type="text" name="title" lay-verify="required|title" required placeholder="拼接输出流地址" autocomplete="off" class="layui-input">
+														<input type="text" readonly="readonly"  name="title" lay-verify="required|title" required placeholder="拼接输出流地址" autocomplete="off" class="layui-input">
 													</div>
 												</div>
 												<div class="layui-form-item">
 													<label class="layui-form-label">输出2</label>
 													<div class="layui-input-block">
-														<input type="text" name="title" lay-verify="required|title" required placeholder="拼接输出流地址" autocomplete="off" class="layui-input">
+														<input type="text" readonly="readonly"  name="title" lay-verify="required|title" required placeholder="拼接输出流地址" autocomplete="off" class="layui-input">
 													</div>
 												</div>
 											</form>
 								        </div>
-								        <span class="layui-nav-bar"></span>
+								        <span class="layui-nav-bar" style="z-index: 0;"></span>
 								     </div>
 					    		</div>	
 					    	</div>
 					    </div>
 						<div id="page"></div>
+						<div id="page" class="layui-carousel" >
+							<iframe src="http://192.168.5.235/doc/page/login.asp?_1546069849761"  width="100%" height="100%" ></iframe>
+						</div>
 					</div>   
 				</div>
-				<div id="camerabox" class="layui-carousel" >
+				<!--<div id="camerabox" class="layui-carousel" >
 					<iframe src="http://www.baidu.com"  width="100%" height="100%" ></iframe>
-				</div>
+				</div>-->
 			</div>
 			
 
@@ -343,119 +346,42 @@
 		</div>
 	</body>
 	<script>
-		//JavaScript代码区域
-		layui.use('jquery', function(){
-		  var $ = layui.jquery;
-		  var submit = function(){
-		    return false;
-		  };
-		  $('#test').on('submit', function(){
-		     return false
-		  });
-		  $('#test').on('submit', function(){
-		     return true
-		  });
-		});
 		
-		layui.use('element', function() {
-			var element = layui.element;
-
-		});
-		
-		layui.use('carousel', function(){
-		  var carousel = layui.carousel;
-		  
-		  var iHeight =$("#body_main_content")[0].offsetHeight;
-		  var iWidth = $("#body_main_content")[0].offsetWidth;
-		  console.log(iHeight,iWidth);
-		  //建造实例
-		  var instich = carousel.render({
-		    elem: '#stichparam'
-		    ,index: 1
-			,width: iWidth+'px'
-			,height: iHeight+'px'
-//			    ,full: true 
-		    ,arrow: 'hover'
-		    ,autoplay: false
-		    //,indicator: 'outside'
-		    ,trigger: 'hover'
-		  });
-		  
-		  //事件
-		  carousel.on('change(test1)', function(res){
-		    console.log(res);
-		  });
-
-		});
-		
-		layui.use('layer', function(){
-			//独立版的layer无需执行这一句
-			var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
-			  
-			  //触发事件
-			var active = {
-			    setTop: function(){
-			    	var that = this; 
-			        //多窗口模式，层叠置顶
-			        layer.open({
-				        type: 2 //此处以iframe举例
-				        ,title: '当你选择该窗体时，即会在最顶端'
-				        ,area: ['390px', '260px']
-				        ,shade: 0
-				        ,maxmin: true
-				        ,offset: [ //为了演示，随机坐标
-				          Math.random()*($(window).height()-300)
-				          ,Math.random()*($(window).width()-390)
-				        ] 
-				        ,content: '//layer.layui.com/test/settop.html'
-				        ,btn: ['继续弹出', '全部关闭'] //只是为了演示
-				        ,yes: function(){
-				            $(that).click(); 
-				        	}
-				        ,btn2: function(){
-				            layer.closeAll();
-				        	}
-				        
-				        ,zIndex: layer.zIndex //重点1
-				        ,success: function(layero){
-				            layer.setTop(layero); //重点2
-				        	}
-			        	});
-			    	}
-			  	};
-			  
-			  	$('.layui-card-header .layui-btn').on('click', function(){
-			    	var othis = $(this), method = othis.data('method');
-			    	active[method] ? active[method].call(this, othis) : '';
-//			    	$(".layui-input-block input").removeAttr("readonly");
-			  	});
-			  
-			  	var rgb = $(".layui-badge-dot").css("background-color");
-			  	$(".stichitem .layui-nav-bar").css("background-color",rgb);
-  
-			});
 //		$(document).ready(function(){
-//			creatpano({text:'沁园春-雪'});
-//			creatpano({text:'沁园春-长沙'});
-//			creatpano({text:'沁园春-望西楼'});
-//			creatpano({text:'沁园春-日出'});
-//			
-//			window.setTimeout(function(){itemWaterfull()},100);
+//			var $panoa = $('#pano-add').parent();
+//			console.log("查找父元素！");
+//			console.log($panoa);
+//		    $panoa.on("click","div",function(event){
+//		  		console.log("here!");
+//				$('#page').load('form.html');
+//				$.getScript("js/stitch_form.js", function(){});
+//				
+//							  
+//				var iHeight =$("#body_main_content")[0].offsetHeight;
+//				var iWidth = $("#body_main_content")[0].offsetWidth;
+//				console.log(iHeight,iWidth);
+//				//建造实例
+//				var instich2 = carousel.render({
+//				    elem: '#stichparam'
+//				    ,index: 1
+//					,width: iWidth+'px'
+//					,height: iHeight+'px'
+//		            //	 ,full: true 
+//				    ,arrow: 'hover'
+//				    ,autoplay: false
+//				    //,indicator: 'outside'
+//				    ,trigger: 'hover'
+//				});
+//				  
+//				//事件
+//				carousel.on('change(test1)', function(obj){
+//				    console.log(obj.index);
+//				});
+//		
+//			})
+//		    
+//		    
 //		});
-//	
-//		$(document).ready(function(){
-//		
-//			$(".layui-nav-item").on("click", "a", function(event){
-//				console.log("点击事件处理");
-//				console.log($(this).text());
-//				console.log($(this).parents());
-//		
-//				$('#page1').load('form.html');
-//		    	$.getScript("js/stitch_form.js", function(){
-////		     		addData(layui);
-//		     	});
-//			});
-//		
-//		});
+
 	</script>
 </html>

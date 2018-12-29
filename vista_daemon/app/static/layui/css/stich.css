@@ -40,7 +40,19 @@
 	border-radius: 2px;
     border:1px dashed #ccc;
 }
+
 .layui-nav-item #pano-add #add-image{
+	content:url('../../img/add.png');
+	border: none;
+	width: 30px;
+	height: 30px;
+	margin-bottom: 2px;
+}
+.layui-nav-item #pano-add #add-image:hover{
+	content:url('../../img/add_hover.png');
+	border: none;
+	width: 30px;
+	height: 30px;
 	margin-bottom: 2px;
 }
 .layui-nav-tree .layui-nav-item a:hover {
@@ -261,7 +273,10 @@ form{
 	width:-webkit-fill-available;
     height: 4px;
 }
-
+.layui-collapse form
+{
+	padding-top: 0px;
+}
 .layui-collapse .layui-form-item {
     margin-bottom: 6px;
 }
@@ -320,7 +335,7 @@ form{
 .layui-collapse #input_content2{
 	float: left;
 	width: 70%;
-	margin-top: 10px;
+	margin-top: 0px;
 }
 .layui-collapse .layui-input{
 	background-color: #E1E1E1;
@@ -357,7 +372,6 @@ form{
 	float: left;
 	width: 30%; 
 	margin-top: 10px;
-	
 }
 .layui-collapse #encode-content2{
 	float: left;
@@ -367,3 +381,20 @@ form{
 .layui-form-select{
 	width: 220px;
 }
+.layui-collapse .layui-tab-content
+{
+	padding-top: 0px;
+}
+.layui-collapse #output_content{
+	width: 30%; 
+}
+.layui-collapse #output-config{
+	position: relative; 
+	float:left; 
+	left: 100px; 
+	top: -33px;
+	width:0px;
+	height: 25px;
+}
+
+
