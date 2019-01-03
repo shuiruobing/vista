@@ -7,7 +7,7 @@ from flask import url_for, redirect
 import flask_login
 
 
-genneral_view = Blueprint('gennerals', __name__)
+genneral_view = Blueprint('gennerals', __name__,)
 
 
 @genneral_view.route('/login', methods=['GET', 'POST'])

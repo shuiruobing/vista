@@ -11,7 +11,7 @@ sqlDir = 'sqlite:///' + path.join(basedir, 'test.db')
 
 def create_app():
     from . import views, models
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='templates/static')
     app.config["SECRET_KEY"] = 'thansky'
     app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(seconds=30)
     app.config['SQLALCHEMY_DATABASE_URI'] = sqlDir
