@@ -1,0 +1,1 @@
+(function(e){var t="?version="+e.web_version;e.on("fetch",function(e){e.uri&&(e.requestUri=e.uri+t)}),e.on("define",function(e){e.uri&&(e.uri=e.uri.replace(t,""))}),define("seajs-nocache",[],{})})(seajs);
